@@ -1,35 +1,29 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import React from "react";
+import { Tabs } from "expo-router";
+import { SpecialTabButton } from "@/app/components/specialTabButton";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+const Layout = () => {
+    return (
+        <Tabs>
+            <Tabs.Screen
+                name="index"
+                options={{ headerShown: false, title: "Home" }} 
+            />
+            <Tabs.Screen
+                name="download"
+                options={{ headerShown: false, title: "Download", tabBarButton: SpecialTabButton }}
+                listeners={{
+                    tabPress: (e) => {
+                        e.preventDefault();
+                    }
+                }}
+            />
+            <Tabs.Screen
+                name="profile"
+                options={{ headerShown: false, title: "Profile" }} 
+            />
+        </Tabs>
+    );
 }
+
+export default Layout;
