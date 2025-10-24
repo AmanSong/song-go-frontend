@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { SpecialTabButton } from "@/app/components/specialTabButton";
+import SpecialTabButton  from "@/app/components/specialTabButton";
 
 const Layout = () => {
     return (
