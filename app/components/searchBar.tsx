@@ -11,7 +11,7 @@ export default function SearchBar({ value, onChangeText, onSubmitEditing }: Sear
   return (
     <TextInput
       className="w-11/12 h-12 bg-white rounded-full px-4 text-lg shadow-md"
-      placeholder="Search for songs"
+      placeholder="Search from YouTube"
       placeholderTextColor="#999"
       value={value}
       onChangeText={onChangeText}
