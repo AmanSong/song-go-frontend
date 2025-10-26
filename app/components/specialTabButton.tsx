@@ -6,8 +6,8 @@ import { useRouter } from "expo-router";
 export default function() {
     const router = useRouter();
     const handlePress = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        router.push('/download');
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        router.push("/download");
     };
 
     return (

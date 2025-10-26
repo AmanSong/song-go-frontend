@@ -14,28 +14,17 @@ export interface YouTubeVideo {
   };
 }
 
-export default async function searchYouTube({query, maxResults}: { query: string; maxResults?: number }): Promise<YouTubeVideo[]> {
-    const YOUTUBE_API_KEY = process.env.EXPO_PUBLIC_YOUTUBE_API_KEY;
-    const BASE_URL = "https://www.googleapis.com/youtube/v3";
+const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
 
-    try {
-        const response = await fetch(
-            `${BASE_URL}/search?part=snippet&type=video&maxResults=${maxResults}&q=${encodeURIComponent(
-                query
-            )}&key=${YOUTUBE_API_KEY}`
-        );
-        const data = await response.json();
-
-        if (data.error) {
-            console.log(YOUTUBE_API_KEY);
-            console.log(query);
-            console.error("YouTube API error:", data.error);
-            return [];
-        }
-        return data.items;
-
-    } catch (error) {
-        console.error("Failed to fetch from YouTube API:", error);
-        return [];
-    }
+export default async function searchYouTube({ query, maxResults }: { query: string; maxResults?: number }): Promise<YouTubeVideo[]> {
+  try {
+    const response = await fetch(`http://${SERVER_IP}/api/youtube/search?q=${encodeURIComponent(query)}&maxResults=${maxResults || 100}`);
+    const data = await response.json();
+    console.log("YouTube API response data:", data.items);
+    return data.items as YouTubeVideo[];
+  }
+  catch (error) {
+    console.error("Error fetching YouTube data:", error);
+    return [];
+  }
 }
