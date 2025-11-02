@@ -1,8 +1,9 @@
-import React from "react";
-import { Modal, View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { Modal, View, Text, Image, ImageBackground } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { YouTubeVideo } from "./youtubeUtility";
-import { useState } from "react";
+import MusicPlayer from "./musicPlayer";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 interface VideoModalProps {
     visible: boolean;
@@ -11,20 +12,35 @@ interface VideoModalProps {
 }
 
 export default function VideoModal({ visible, onClose, video }: VideoModalProps) {
-    const [playPreview, setPlayPreview] = useState(null);
+    const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
 
     return (
         <SafeAreaProvider>
             <SafeAreaView className="flex-1 justify-center items-center">
                 <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
-                    <View className="flex-1 justify-center items-center" onTouchStart={() => onClose()}>
-                        <View className="bg-white p-6 w-full max-h-svh max-w-md" onTouchStart={(e) => e.stopPropagation()}>
-                            <Image source={{ uri: video.snippet.thumbnails.medium.url }} className="w-full h-48 rounded-lg mb-4" />
-                            <Text numberOfLines={2} className="text-lg font-bold mb-4">{video.snippet.title}</Text>
-
-                            <View className="flex-1 justify-center items-center">
-                                <Text>Hi</Text>
-                            </View>
+                    <View className="flex-1 justify-center items-center bg-black/50" onTouchStart={() => onClose()}>
+                        <View className="w-11/12 max-h-[90%] p-4" onTouchStart={(e) => e.stopPropagation()}>
+                            <ImageBackground
+                                source={{ uri: video.snippet.thumbnails.medium.url }}
+                                className="w-full rounded-lg overflow-visible p-6"
+                                resizeMode="cover"
+                                blurRadius={4}
+                            >
+                                <View className="justify-center items-center bg-TransparentWhite rounded-lg p-4 overflow-visible">
+                                    <Image
+                                        source={{ uri: video.snippet.thumbnails.high.url }}
+                                        className="w-full h-44 rounded-lg mb-4"
+                                    />
+                                    <View className="w-full h-40 p-2 justify-center items-center rounded-lg bg-TransparentWhite">
+                                        <Text numberOfLines={2} className="text-balance font-bold mb-4 text-center">
+                                            {video.snippet.title}
+                                        </Text>
+                                        <View className="flex-row">
+                                            <MusicPlayer musicUrl={`http://${SERVER_IP}/api/video/stream/${video.id.videoId}`} />
+                                        </View>
+                                    </View>
+                                </View>
+                            </ImageBackground>
                         </View>
                     </View>
                 </Modal>

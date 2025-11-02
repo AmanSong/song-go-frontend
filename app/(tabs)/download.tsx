@@ -62,22 +62,23 @@ export default function Download() {
                 keyExtractor={(item) => item.id.videoId}
                 renderItem={({ item }: { item: Video }) => (
                     <View className="p-4 border-b border-gray-200" onTouchEnd={() => handleVideoSelect(item)}>
-                        <Image
-                            source={{ uri: item.snippet.thumbnails.medium.url }}
-                            className="w-40 h-24 rounded-lg mb-2"
-                        />
-                        <Text className="text-white font-bold text-base">
-                            {item.snippet.title}
-                        </Text>
-                        <Text className="text-gray-400 text-sm">
-                            {item.snippet.channelTitle}
-                        </Text>
-                        <Text className="text-gray-500 text-xs">
-                            {new Date(item.snippet.publishedAt).toLocaleDateString()}
-                        </Text>
-                        <Text className="text-gray-400 text-sm mt-1" numberOfLines={2}>
-                            {item.snippet.description}
-                        </Text>
+                        <View className="flex-row items-start">
+                            <Image
+                                source={{ uri: item.snippet.thumbnails.medium.url }}
+                                className="w-32 h-24 rounded-lg mr-4"
+                            />
+                            <View className="flex-1">
+                                <Text className="text-white font-bold text-base" numberOfLines={2}>
+                                    {item.snippet.title}
+                                </Text>
+                                <Text className="text-gray-400 text-sm mt-1">
+                                    {item.snippet.channelTitle}
+                                </Text>
+                                <Text className="text-gray-500 text-xs mt-1">
+                                    {new Date(item.snippet.publishedAt).toLocaleDateString()}
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 )}
 

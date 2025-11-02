@@ -11,6 +11,7 @@ module.exports = {
       colors: {
         Primary: "#DA7676",
         Secondary: "#3C3636",
+        TransparentWhite: "rgba(255, 255, 255, 0.15)",
       },
     },
   },
