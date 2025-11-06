@@ -1,29 +1,72 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import SpecialTabButton  from "@/app/components/specialTabButton";
+import SpecialTabButton from "@/app/components/specialTabButton";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { View } from "react-native";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
+import 'react-native-get-random-values'
 
-const Layout = () => {
+function CustomTabs() {
+    const insets = useSafeAreaInsets();
+
     return (
-        <Tabs>
+        <Tabs
+            screenOptions={{
+                tabBarShowLabel: false,
+                headerShown: false,
+                tabBarStyle: {
+                    backgroundColor: "#3C3636",
+                    height: 50 + insets.bottom,
+                    paddingBottom: insets.bottom,
+                    borderTopWidth: 0
+                }
+            }}
+        >
             <Tabs.Screen
                 name="index"
-                options={{ headerShown: false, title: "Home" }} 
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View pointerEvents="none" className="justify-center items-center h-12 w-12 pt-1">
+                            <MaterialIcons
+                                pointerEvents="none"
+                                name="home"
+                                size={40}
+                                color={focused ? "#DA7676" : "#A0A0A0"}
+                            />
+                        </View>
+                    ),
+                }}
             />
             <Tabs.Screen
                 name="download"
-                options={{ headerShown: false, title: "Download", tabBarButton: SpecialTabButton }}
+                options={{ tabBarButton: SpecialTabButton }}
                 listeners={{
-                    tabPress: (e) => {
-                        e.preventDefault();
-                    }
+                    tabPress: (e) => e.preventDefault(),
                 }}
             />
             <Tabs.Screen
                 name="profile"
-                options={{ headerShown: false, title: "Profile" }} 
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View pointerEvents="none" className="justify-center items-center h-12 w-12 pt-1">
+                            <MaterialIcons
+                                pointerEvents="none"
+                                name="account-circle"
+                                size={40}
+                                color={focused ? "#DA7676" : "#A0A0A0"}
+                            />
+                        </View>
+                    ),
+                }}
             />
         </Tabs>
     );
 }
 
-export default Layout;
+export default function Layout() {
+    return (
+        <SafeAreaProvider>
+            <CustomTabs />
+        </SafeAreaProvider>
+    );
+}

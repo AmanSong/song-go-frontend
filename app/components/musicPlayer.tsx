@@ -1,8 +1,7 @@
 import React, { use, useState } from "react";
 import { useEffect } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { useAudioPlayer } from 'expo-audio';
-import { StatusBar } from "react-native";
+import { useAudioPlayer, AudioSource } from 'expo-audio';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 interface MusicPlayerProps {
@@ -10,6 +9,8 @@ interface MusicPlayerProps {
 }
 
 export default function MusicPlayer({ musicUrl }: MusicPlayerProps) {
+    // Scrub url to remove allow playing from local file
+    musicUrl = musicUrl?.replace("file:///", "/");
     const player = useAudioPlayer(musicUrl ? { uri: musicUrl } : null);
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -32,12 +33,8 @@ export default function MusicPlayer({ musicUrl }: MusicPlayerProps) {
 
     return (
         <View className="flex-row items-center justify-center bg-WhiteAlpha rounded-lg">
-            <TouchableOpacity onPress={() => {handlePlayPause()}}>
+            <TouchableOpacity onPress={() => { handlePlayPause() }}>
                 <MaterialIcons name={isPlaying ? "pause-circle-outline" : "play-circle-outline"} size={54} color="black" />
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-                <MaterialIcons name="download" size={54} color="black" />
             </TouchableOpacity>
         </View>
     );

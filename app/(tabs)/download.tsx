@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "react-native";
 import SearchBar from "../components/searchBar";
-import searchYouTube from "../components/youtubeUtility";
-import { YouTubeVideo } from "../components/youtubeUtility";
+import searchYouTube from "../utils/youtubeUtility";
+import { YouTubeVideo } from "../utils/youtubeUtility";
 import VideoModal from "../components/videoModal";
+import { SafeAreaInsetsContext, useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Video {
     id: {
@@ -25,9 +25,10 @@ interface Video {
 }
 
 export default function Download() {
+    const insets = useSafeAreaInsets();
+
     const [searchQuery, setSearchQuery] = useState("");
     const [videos, setVideos] = useState<YouTubeVideo[]>([]);
-
     const [openModal, setOpenModal] = useState(false);
     const [selectedVideo, setSelectedVideo] = useState<YouTubeVideo | null>(null);
 
@@ -43,7 +44,7 @@ export default function Download() {
     }
 
     return (
-        <View className="bg-Secondary pt-8 flex-1">
+        <View style={{ flex: 1, paddingTop: insets.top }} className="bg-Secondary flex-1">
             <FlatList contentContainerStyle={{ flexGrow: 1 }}
                 // Search Bar as Sticky Header
                 ListHeaderComponent={
@@ -91,13 +92,12 @@ export default function Download() {
                 }
             />
 
-            {/* Video Modal */}
             {selectedVideo && (
                 <VideoModal
                     visible={openModal}
                     onClose={() => {
                         setOpenModal(false);
-                        setSelectedVideo(null); // Clear selected video when closing
+                        setSelectedVideo(null);
                     }}
                     video={selectedVideo}
                 />

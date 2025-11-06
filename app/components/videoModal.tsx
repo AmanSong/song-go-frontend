@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Modal, View, Text, Image, ImageBackground } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { YouTubeVideo } from "./youtubeUtility";
+import { YouTubeVideo } from "../utils/youtubeUtility";
 import MusicPlayer from "./musicPlayer";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Downloader from "./musicDownloader"
 
 interface VideoModalProps {
     visible: boolean;
@@ -13,7 +13,7 @@ interface VideoModalProps {
 
 export default function VideoModal({ visible, onClose, video }: VideoModalProps) {
     const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
-
+    const URL = `http://${SERVER_IP}/api/video/stream/${video.id.videoId}`
     return (
         <SafeAreaProvider>
             <SafeAreaView className="flex-1 justify-center items-center">
@@ -31,13 +31,16 @@ export default function VideoModal({ visible, onClose, video }: VideoModalProps)
                                         source={{ uri: video.snippet.thumbnails.high.url }}
                                         className="w-full h-44 rounded-lg mb-4"
                                     />
-                                    <View className="w-full h-40 p-2 justify-center items-center rounded-lg bg-TransparentWhite">
+                                    <View className="w-full h-35 p-2 justify-center items-center rounded-lg bg-TransparentWhite">
                                         <Text numberOfLines={2} className="text-balance font-bold mb-4 text-center">
                                             {video.snippet.title}
                                         </Text>
                                         <View className="flex-row">
-                                            <MusicPlayer musicUrl={`http://${SERVER_IP}/api/video/stream/${video.id.videoId}`} />
+                                            <MusicPlayer musicUrl={URL}/>
                                         </View>
+                                    </View>
+                                    <View className="w-full mt-1">
+                                        <Downloader id={video.id.videoId} title={video.snippet.title} image={video.snippet.thumbnails.high.url} />
                                     </View>
                                 </View>
                             </ImageBackground>
