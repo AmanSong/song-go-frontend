@@ -133,9 +133,9 @@ export default function Index() {
             {expandedId === item.id && (
               <View className="mt-4">
                 <MusicPlayer musicUrl={item.music} />
-                <Button
+                {/* <Button
                   onPress={() => handlePresses(item.id, "delete")}
-                >Delete</Button>
+                >Delete</Button> */}
               </View>
             )}
           </View>

@@ -1,5 +1,5 @@
-import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Directory, File, Paths } from 'expo-file-system';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +18,7 @@ interface SongMetadata {
 
 export default function Downloader({ id, title, image }: DownloadProps) {
     const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
+    const [isDownloading, setIsDownloading] = useState(false);
 
     async function download(): Promise<SongMetadata | void> {
         if (!id) {
@@ -26,6 +27,8 @@ export default function Downloader({ id, title, image }: DownloadProps) {
         }
 
         try {
+            setIsDownloading(true);
+
             // Get / create the main music folder
             const musicDir = new Directory(Paths.document, 'music');
             if (!musicDir.exists) {
@@ -61,22 +64,33 @@ export default function Downloader({ id, title, image }: DownloadProps) {
                         coverUri = coverFile.uri;
                     } else {
                         console.warn('Cover download failed');
+                        setIsDownloading(false);
+                        alert('Cover download failed');
                     }
                 } catch (err) {
                     console.warn('Cover download error:', err);
                 }
             }
 
-            console.log('Download complete:');
+            setIsDownloading(false);
+            alert(`Finished downloading ${title}`);
+
         } catch (err) {
             console.error('Download failed:', err);
+            alert('Download failed');
+            setIsDownloading(false);
         }
     }
 
     return (
-        <TouchableOpacity onPress={download}>
-            <View style={{ backgroundColor: '#Primary', justifyContent: 'center', alignItems: 'center', width: '100%', padding: 8, borderRadius: 8 }}>
-                <MaterialIcons name="download" size={24} color="#fff" />
+        <TouchableOpacity onPress={() => download()}>
+            <View style={{ backgroundColor: '#Primary', justifyContent: 'center', alignItems: 'center', width: '100%', borderRadius: 8 }}>
+                {
+                    isDownloading ?
+                    <ActivityIndicator size={36} color={"#FFFFFF"}></ActivityIndicator>
+                    :
+                    <MaterialIcons name="download-for-offline" size={36} color="#fff" />
+                }
             </View>
         </TouchableOpacity>
     );
