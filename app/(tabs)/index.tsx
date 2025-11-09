@@ -1,4 +1,4 @@
-import { FlatList, Text, View, TouchableOpacity } from "react-native";
+import { FlatList, Text, View, TouchableOpacity, Image } from "react-native";
 import { Directory, File, Paths } from 'expo-file-system';
 import { useEffect, useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,12 +12,13 @@ interface MusicFile {
   id: string;
   name: string;
   music?: any;
+  image?: any;
 }
 
 export default function Index() {
   const insets = useSafeAreaInsets();
-  const [focus, setFocus] = useState(false);
   const [music, setMusic] = useState<MusicFile[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -26,6 +27,13 @@ export default function Index() {
       };
     }, [])
   );
+
+  function handlePresses(songID: string, type: string) {
+    if (type == "delete") {
+      MusicManager.deleteMusic(songID);
+      listMusicFiles();
+    }
+  }
 
   async function listMusicFiles() {
     try {
@@ -48,9 +56,11 @@ export default function Index() {
 
         const audioFile = folderContents.find(f => f.name === 'audio.mp3');
         const nameFile = folderContents.find(f => f.name === 'musicName.txt');
+        const imageFile = folderContents.find(f => f.name === 'cover.jpg');
 
-        let file_name = ''
-        let file_music
+        let file_name = '';
+        let file_music;
+        let file_image;
         if (nameFile) {
           try {
             const file = new File(nameFile.uri);
@@ -59,7 +69,6 @@ export default function Index() {
             console.error(`Error reading name file in folder ${folder.name}:`, error);
           }
         }
-
         if (audioFile) {
           try {
             file_music = audioFile.uri;
@@ -67,11 +76,20 @@ export default function Index() {
             console.error(`Error reading bytes file in folder ${folder.name}:`, error);
           }
         }
+        if (imageFile) {
+          try {
+            file_image = imageFile.uri;
+          }
+          catch (error) {
+            console.error(`Error reading bytes file in folder ${folder.name}:`, error);
+          }
+        }
 
         musicFiles.push({
           id: folderDir.name,
           name: file_name,
-          music: file_music
+          music: file_music,
+          image: file_image
         });
       }
 
@@ -88,8 +106,6 @@ export default function Index() {
     listMusicFiles();
   }, []);
 
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -101,18 +117,24 @@ export default function Index() {
         data={music}
         keyExtractor={(item, index) => `${item.name}-${index}`}
         renderItem={({ item }: { item: MusicFile }) => (
-          <View className="p-4 border-b border-gray-700">
-            {/* Clickable header to expand/collapse */}
-            <TouchableOpacity onPress={() => toggleExpand(item.id)}>
-              <Text className="text-white text-lg">{item.name}</Text>
-            </TouchableOpacity>
+          <View className=" p-4 border-b border-gray-700">
 
-            {/* Only show MusicPlayer when expanded */}
+            <View className="w-full pt-2">
+              <TouchableOpacity className="flex-row items-start" onPress={() => toggleExpand(item.id)}>
+                <Image source={{ uri: item.image }} className="w-32 h-24 rounded-lg mr-4" />
+                <View className="flex-1">
+                  <Text className="text-white text-base" numberOfLines={4}>
+                    {item.name}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
             {expandedId === item.id && (
               <View className="mt-4">
                 <MusicPlayer musicUrl={item.music} />
                 <Button
-                  onPress={() => MusicManager.deleteMusic(item.id)}
+                  onPress={() => handlePresses(item.id, "delete")}
                 >Delete</Button>
               </View>
             )}

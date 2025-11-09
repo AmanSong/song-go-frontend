@@ -1,6 +1,8 @@
 import { Directory, File, Paths } from 'expo-file-system';
 
 export const MusicManager = {
+  
+
   async deleteMusic(folderId: string) {
     try {
       const songDir = new Directory(Paths.document, `music/${folderId}`);
@@ -17,6 +19,8 @@ export const MusicManager = {
       throw error;
     }
   },
+
+
 };
 
 export default MusicManager;
