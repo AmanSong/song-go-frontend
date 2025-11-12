@@ -1,26 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
-import { useAudioPlayer } from "expo-audio";
+import { AudioPlayer, useAudioPlayer } from "expo-audio";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Slider from "@react-native-community/slider";
 
 interface MusicPlayerProps {
     musicUrl?: string;
+    onPrevious?: () => void;
+    onNext?: () => void;
 }
 
-export default function MusicPlayer({ musicUrl }: MusicPlayerProps) {
+export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlayerProps) {
     // Allow local file playback
     musicUrl = musicUrl?.replace("file:///", "/");
-    const player = useAudioPlayer(musicUrl ? { uri: musicUrl } : null);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isSeeking, setIsSeeking] = useState(false);
+    
+    let player: AudioPlayer;
+    player = useAudioPlayer(null);
+
+    useEffect(() => {
+        if(musicUrl) {
+            player.replace({uri: musicUrl});
+        }
+        else {
+            player.replace(null);
+        }
+    }, [musicUrl]);
 
     useEffect(() => {
         setDuration(player.duration || 0);
-    }, [musicUrl, player.duration]);
+    }, [player.duration, isPlaying])
 
     useEffect(() => {
         let interval: any;
@@ -71,34 +84,39 @@ export default function MusicPlayer({ musicUrl }: MusicPlayerProps) {
 
     return (
 
-        <View className="flex-1 items-center justify-center bg-white/10 rounded-lg">
-            <View className="w-full max-w-sm px-6">
-                <View className="mb-8">
-                    <View className="flex-row justify-between items-center w-full px-2 mt-2">
-                        <Text className="text-white text-xs">{formatTime(position)}</Text>
-                        <Text className="text-white text-xs">{formatTime(duration)}</Text>
-                    </View>
+        <View className="flex-1 items-center justify-center">
+            <View className="w-full max-w-sm px-8">
 
-                    <Slider
-                        minimumValue={0}
-                        maximumValue={1}
-                        value={progress}
-                        onSlidingStart={onSlidingStart}
-                        onSlidingComplete={onSlidingComplete}
-                        minimumTrackTintColor="#1DB954"
-                        maximumTrackTintColor="#E5E5E5"
-                        thumbTintColor="#1DB954"
-                        className="w-full"
-                    />
+                <View className="flex-row justify-between items-center w-full px-2 mt-2">
+                    <Text className="text-white text-xs">{formatTime(position)}</Text>
+                    <Text className="text-white text-xs">{formatTime(duration)}</Text>
                 </View>
 
-                <View className="items-center">
-                    <TouchableOpacity onPress={handlePlayPause} className="active:opacity-70">
+                <Slider
+                    minimumValue={0}
+                    maximumValue={1}
+                    value={progress}
+                    onSlidingStart={onSlidingStart}
+                    onSlidingComplete={onSlidingComplete}
+                    minimumTrackTintColor="#DA7676"
+                    maximumTrackTintColor="#E5E5E5"
+                    thumbTintColor="#DA7676"
+                    className="w-full"
+                />
+
+                <View className="flex-row justify-center items-center mt-4 mb-4 px-16 space-x-6">
+                    <TouchableOpacity onPress={onPrevious} className="active:opacity-70">
+                        <MaterialIcons name="skip-previous" size={40} color={"#DA7676"} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handlePlayPause} className="active:opacity-70 mx-2">
                         <MaterialIcons
                             name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
-                            size={64}
-                            color="#1DB954"
+                            size={50}
+                            color="#DA7676"
                         />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onNext} className="active:opacity-70">
+                        <MaterialIcons name="skip-next" size={40} color={"#DA7676"} />
                     </TouchableOpacity>
                 </View>
             </View>

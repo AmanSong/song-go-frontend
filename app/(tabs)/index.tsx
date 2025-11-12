@@ -7,6 +7,7 @@ import { MusicManager } from "../utils/musicManager"
 import { useFocusEffect } from "@react-navigation/native";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useRouter } from "expo-router";
 
 interface MusicFile {
   id: string;
@@ -16,6 +17,7 @@ interface MusicFile {
 }
 
 export default function Index() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [music, setMusic] = useState<MusicFile[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -120,7 +122,16 @@ export default function Index() {
           <View className=" p-4 border-b border-gray-700">
 
             <View className="w-full pt-2">
-              <TouchableOpacity className="flex-row items-start" onPress={() => toggleExpand(item.id)}>
+              <TouchableOpacity className="flex-row items-start"
+              //onPress={() => toggleExpand()}
+                onPress={() => router.push({
+                  pathname: "/player",
+                  params: {
+                    index: music.findIndex((m) => m.id === item.id),
+                    list: JSON.stringify(music),
+                  },
+                })}
+              >
                 <Image source={{ uri: item.image }} className="w-32 h-24 rounded-lg mr-4" />
                 <View className="flex-1">
                   <Text className="text-white text-base" numberOfLines={4}>
@@ -139,17 +150,17 @@ export default function Index() {
               </View>
             )}
           </View>
-        )}
-
+        )
+        }
 
         ListEmptyComponent={
-          <View className="flex-1 justify-center items-center mt-10">
+          < View className="flex-1 justify-center items-center mt-10" >
             <Text className="text-gray-500 text-center">
               No music files found. Try downloading some!
             </Text>
-          </View>
+          </View >
         }
       />
-    </View>
+    </View >
   );
 }

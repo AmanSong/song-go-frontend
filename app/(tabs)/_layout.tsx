@@ -29,7 +29,7 @@ function CustomTabs() {
                         <View pointerEvents="none" className="justify-center items-center h-12 w-12 pt-1">
                             <MaterialIcons
                                 pointerEvents="none"
-                                name="home"
+                                name="queue-music"
                                 size={40}
                                 color={focused ? "#DA7676" : "#A0A0A0"}
                             />
@@ -57,6 +57,13 @@ function CustomTabs() {
                             />
                         </View>
                     ),
+                }}
+            />
+            <Tabs.Screen
+                name="player"
+                options={{
+                    href: null,
+                    tabBarStyle: { display: 'none' }
                 }}
             />
         </Tabs>

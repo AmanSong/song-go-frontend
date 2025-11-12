@@ -39,8 +39,8 @@ export default function VideoPreview(Video: YouTubeVideo) {
                 {
                     isLoaded ? <MaterialIcons
                         name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
-                        size={36} color="#fff"
-                    /> : <ActivityIndicator color={"#FFFFFF"} size={36}></ActivityIndicator>
+                        size={36} color="#3C3636"
+                    /> : <ActivityIndicator color={"#3C3636"} size={36}></ActivityIndicator>
                 }
             </TouchableOpacity>
             <Downloader id={Video.id.videoId} title={Video.snippet.title} image={Video.snippet.thumbnails.high.url}></Downloader>

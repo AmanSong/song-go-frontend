@@ -84,12 +84,12 @@ export default function Downloader({ id, title, image }: DownloadProps) {
 
     return (
         <TouchableOpacity onPress={() => download()}>
-            <View style={{ backgroundColor: '#Primary', justifyContent: 'center', alignItems: 'center', width: '100%', borderRadius: 8 }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', width: '100%', borderRadius: 8 }}>
                 {
                     isDownloading ?
-                    <ActivityIndicator size={36} color={"#FFFFFF"}></ActivityIndicator>
+                    <ActivityIndicator size={36} color={"#3C3636"}></ActivityIndicator>
                     :
-                    <MaterialIcons name="download-for-offline" size={36} color="#fff" />
+                    <MaterialIcons name="download-for-offline" size={36} color="#3C3636" />
                 }
             </View>
         </TouchableOpacity>
