@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Insets, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, Insets, TouchableOpacity, Image, FlatList, ImageBackground } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Button } from "@react-navigation/elements";
 
 interface MusicFile {
     id: string;
@@ -15,12 +16,13 @@ interface MusicFile {
 export default function Player() {
     const insets = useSafeAreaInsets();
     const { list, index } = useLocalSearchParams();
-
     const musicList: MusicFile[] = typeof list === 'string' ? JSON.parse(list) : [];
     const [currentIndex, setCurrentIndex] = useState(
         typeof index === 'string' ? Number(index) : 0
     );
     const [currentTrack, setCurrentTrack] = useState(musicList[currentIndex]);
+    const [hidden, setHidden] = useState(false);
+
 
     const handlePrevious = () => {
         setCurrentIndex(prev => (prev > 0 ? prev - 1 : musicList.length - 1));
@@ -30,32 +32,81 @@ export default function Player() {
         setCurrentIndex(prev => (prev < musicList.length - 1 ? prev + 1 : 0));
     };
 
+    const selectMusic = (music: MusicFile) => {
+        const trackIndex = musicList.findIndex(track => track.id === music.id);
+        setCurrentIndex(trackIndex);
+        setCurrentTrack(music);
+    }
+
     // Sync currentTrack when currentIndex changes
     useEffect(() => {
         setCurrentTrack(musicList[currentIndex]);
     }, [currentIndex, musicList]);
 
+
+    //
+    const hidePlayer = () => {
+        setHidden(!hidden);
+    }
+
+    //
+
     return (
-        <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#1E1E1E' }}>
+        <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: '#1E1E1E' }}>
+            <ImageBackground
+                blurRadius={50}
+                source={{ uri: currentTrack?.image }}
+                className="flex-1 justify-center items-center bg-Secondary/10 rounded-lg">
 
-            <View className="flex-1 bg-Primary px-8 py-8">
-                <View className="justify-center items-center bg-black">
-                    <Image className="h-64 w-64" source={{uri: currentTrack?.image}}/>
+                <View className="justify-center items-center w-full h-96 p-2 bg-Primary/10 rounded-xl">
+                    <Image className="w-80 h-80" source={{ uri: currentTrack?.image }} />
                 </View>
-            </View>
 
-            <View className="h-72">
-                <Text numberOfLines={2} className="text-white text-base font-bold text-center pt-4 mb-2 px-8 h-16">
-                    {currentTrack?.name}
-                </Text>
-                <View className="h-36">
-                    <MusicPlayer
-                    musicUrl={currentTrack?.music}
-                    onPrevious={handlePrevious}
-                    onNext={handleNext}
+                <FlatList className="w-full bg-Primary/50 rounded-xl mb-4 px-4 py-2" contentContainerStyle={{ flexGrow: 1 }}
+                    data={musicList}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }: { item: MusicFile }) => (
+                        <View className={`flex-row items-center justify-between p-2 mb-2 rounded-xl border border-white/10 
+                            ${currentTrack?.id === item.id
+                                ? 'bg-Primary/70'
+                                : 'bg-Secondary'
+                            }`}>
+
+                            <TouchableOpacity onPress={() => selectMusic(item)}>
+                                <View className="flex-row items-start">
+                                    <Image className="w-16 h-16 rounded-lg mr-4" resizeMode="cover" source={{ uri: item.image }} />
+                                    <View className="max-w-[75%]">
+                                        <Text numberOfLines={2} className="text-white font-semibold text-base">
+                                            {item.name}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+
+                        </View>
+                    )}
                 />
+
+                <TouchableOpacity onPress={hidePlayer} activeOpacity={1} className="h-8 w-full justify-center items-center bg-Secondary rounded-t-xl">
+                    <MaterialIcons size={36} color={"white"} name="arrow-drop-up"></MaterialIcons>
+                </TouchableOpacity>
+
+                <View className={`${hidden ? "opacity-0 h-0 pointer-events-none" : "opacity-100 h-58 w-full"} bg-Secondary `}>
+                    <View className="h-16">
+                        <Text numberOfLines={2} className="text-white text-base font-bold text-center px-8 mt-2">
+                            {currentTrack?.name}
+                        </Text>
+                    </View>
+                    <View className="h-32 mb-4 -mt-3">
+                        <MusicPlayer
+                            musicUrl={currentTrack?.music}
+                            onPrevious={handlePrevious}
+                            onNext={handleNext}
+                        />
+                    </View>
                 </View>
-            </View>
+            </ImageBackground>
+
         </View>
     );
 }

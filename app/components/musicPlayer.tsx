@@ -83,7 +83,6 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlaye
     const progress = duration > 0 ? position / duration : 0;
 
     return (
-
         <View className="flex-1 items-center justify-center">
             <View className="w-full max-w-sm px-8">
 
@@ -104,7 +103,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlaye
                     className="w-full"
                 />
 
-                <View className="flex-row justify-center items-center mt-4 mb-4 px-16 space-x-6">
+                <View className="flex-row justify-center items-center mt-4">
                     <TouchableOpacity onPress={onPrevious} className="active:opacity-70">
                         <MaterialIcons name="skip-previous" size={40} color={"#DA7676"} />
                     </TouchableOpacity>

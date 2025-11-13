@@ -108,9 +108,6 @@ export default function Index() {
     listMusicFiles();
   }, []);
 
-  const toggleExpand = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#1E1E1E' }}>
