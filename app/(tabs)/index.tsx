@@ -9,6 +9,7 @@ import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import EditText from "../components/editTextModal";
+import ListPlaylistModal from "../components/listPlaylistsModal";
 
 export interface MusicFile {
   id: string;
@@ -23,7 +24,7 @@ export default function Index() {
   const [music, setMusic] = useState<MusicFile[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false)
-  const [newName, setNewName] = useState("");
+  const [openPlaylist, setOpenPlaylist] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -72,6 +73,12 @@ export default function Index() {
     if (type === "edit") {
       setEditing(true);
     }
+  }
+
+  const handleClose = () => {
+    setEditing(false);
+    setOpenPlaylist(false)
+    listMusicFiles();
   }
 
   async function listMusicFiles() {
@@ -171,44 +178,49 @@ export default function Index() {
 
             {expandedId === item.id && (
               <View className="flex-row items-start justify-between px-2 mt-4">
-                <TouchableOpacity
-                  onPress={() => playMusic(item)}
-                  className="bg-green-300 rounded-full">
-
-                  <MaterialIcons name="play-arrow" color="green" size={50} />
+                {/* Play music */}
+                <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
+                  onPress={() => playMusic(item)}>
+                  <MaterialIcons name="play-arrow" color={"#DA7676"} size={35} />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => handlePresses(item.id, "edit")}
-                  className="bg-blue-300 rounded-full">
-
-                  <MaterialIcons name="drive-file-rename-outline" color={"blue"} size={50} />
+                {/* Edit Name */}
+                <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
+                  onPress={() => handlePresses(item.id, "edit")}>
+                  <MaterialIcons name="drive-file-rename-outline" color={"#DA7676"} size={35} />
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  className="e rounded-full">
-
-                  <MaterialIcons name="save" size={50} />
+                {/* Add to playlist */}
+                <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
+                  onPress={() => setOpenPlaylist(!openPlaylist)}>
+                  <MaterialIcons name="bookmark-add" color={"#DA7676"} size={35} />
+                  {
+                    openPlaylist ?
+                      <ListPlaylistModal
+                        visible={openPlaylist}
+                        onClose={() => handleClose()}
+                        song={item}
+                      />
+                      : 
+                      null
+                  }
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => handlePresses(item.id, "delete")}
-                  className="bg-red-300 rounded-full">
-
-                  <MaterialIcons name="delete-forever" color="red" size={50} />
+                {/* delete */}
+                <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
+                  onPress={() => handlePresses(item.id, "delete")}>
+                  <MaterialIcons name="delete-forever" color={"#DA7676"} size={35} />
                   {
                     editing ?
                       <EditText
                         visible={editing}
-                        onClose={() => setEditing(false)}
+                        onClose={() => handleClose()}
                         Song={item}
                       />
                       :
                       null
                   }
                 </TouchableOpacity>
-
-
               </View>
             )}
           </View>

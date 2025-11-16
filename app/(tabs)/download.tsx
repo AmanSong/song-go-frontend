@@ -5,7 +5,7 @@ import SearchBar from "../components/searchBar";
 import searchYouTube from "../utils/youtubeUtility";
 import { YouTubeVideo } from "../utils/youtubeUtility";
 import VideoModal from "../components/videoModal";
-import { SafeAreaInsetsContext, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Video {
     id: {
@@ -44,11 +44,11 @@ export default function Download() {
     }
 
     return (
-        <View style={{ flex: 1, paddingTop: insets.top }} className="bg-Secondary flex-1">
+        <View style={{ flex: 1, paddingTop: insets.top }} className="bg-Dark flex-1">
             <FlatList contentContainerStyle={{ flexGrow: 1 }}
                 // Search Bar as Sticky Header
                 ListHeaderComponent={
-                    <View className="w-full items-center pt-4 pb-4 bg-Secondary">
+                    <View className="w-full items-center pt-4 pb-4 bg-Dark">
                         <SearchBar
                             value={searchQuery}
                             onChangeText={setSearchQuery}

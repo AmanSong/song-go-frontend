@@ -1,4 +1,5 @@
 import { Directory, File, FileHandle, Paths } from 'expo-file-system';
+import { v4 as uuidv4 } from 'uuid';
 
 export const MusicManager = {
 
@@ -51,6 +52,62 @@ export const MusicManager = {
       return null;
     }
   },
+
+  async createPlaylist(name: string) {
+    const playlistsDir = new Directory(Paths.document, 'playlists');
+
+    if (!playlistsDir.exists) {
+      playlistsDir.create({ intermediates: true });
+    }
+
+    const id = uuidv4();
+
+    const playlistFile = new File(playlistsDir, `${id}.json`);
+
+    const data = {
+      id,
+      name,
+      songIds: []
+    };
+
+    playlistFile.create();
+    playlistFile.write(JSON.stringify(data));
+
+    return id;
+  },
+
+  async loadPlaylists() {
+    const playlistsDir = new Directory(Paths.document, 'playlists');
+
+    const files = playlistsDir.list();
+    const playlists = [];
+
+    for (const f of files) {
+      if (!f.name.endsWith('.json')) continue;
+
+      const file = new File(playlistsDir, f.name);
+      const text = await file.text();
+
+      playlists.push(JSON.parse(text));
+    }
+
+    return playlists;
+  },
+
+  async addSongToPlaylist(playlistId: string, songId: string) {
+    const playlistsDir = new Directory(Paths.document, 'playlists');
+    const playlistFile = new File(playlistsDir, `${playlistId}.json`);
+
+    const json = await playlistFile.text();
+    const playlist = JSON.parse(json);
+
+    if (!playlist.songIds.includes(songId)) {
+        playlist.songIds.push(songId);
+    }
+
+    playlistFile.write(JSON.stringify(playlist));
+}
+
 };
 
 export default MusicManager;
