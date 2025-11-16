@@ -1,4 +1,4 @@
-import { FlatList, Text, View, TouchableOpacity, Image } from "react-native";
+import { FlatList, Text, View, TouchableOpacity, Image, Alert, TextInput } from "react-native";
 import { Directory, File, Paths } from 'expo-file-system';
 import { useEffect, useState, useCallback } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -8,8 +8,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
+import EditText from "../components/editTextModal";
 
-interface MusicFile {
+export interface MusicFile {
   id: string;
   name: string;
   music?: any;
@@ -21,6 +22,8 @@ export default function Index() {
   const insets = useSafeAreaInsets();
   const [music, setMusic] = useState<MusicFile[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false)
+  const [newName, setNewName] = useState("");
 
   useFocusEffect(
     useCallback(() => {
@@ -30,10 +33,44 @@ export default function Index() {
     }, [])
   );
 
+  function playMusic(item: MusicFile) {
+    router.push({
+      pathname: "/player",
+      params: {
+        index: music.findIndex((m) => m.id === item.id),
+        list: JSON.stringify(music),
+      },
+    });
+  }
+
   function handlePresses(songID: string, type: string) {
-    if (type == "delete") {
-      MusicManager.deleteMusic(songID);
-      listMusicFiles();
+    if (type === "delete") {
+      const showConfirmationAlert = () => {
+        Alert.alert(
+          "Are you sure?",
+          "This action cannot be undone.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+            {
+              text: "OK",
+              onPress: () => {
+                MusicManager.deleteMusic(songID);
+                listMusicFiles();
+              },
+              style: "destructive"
+            }
+          ]
+        );
+
+      };
+      showConfirmationAlert();
+    }
+
+    if (type === "edit") {
+      setEditing(true);
     }
   }
 
@@ -120,14 +157,8 @@ export default function Index() {
 
             <View className="w-full pt-2">
               <TouchableOpacity className="flex-row items-start"
-              //onPress={() => toggleExpand()}
-                onPress={() => router.push({
-                  pathname: "/player",
-                  params: {
-                    index: music.findIndex((m) => m.id === item.id),
-                    list: JSON.stringify(music),
-                  },
-                })}
+                onPress={() => setExpandedId(prevId => prevId === item.id ? null : item.id)}
+              //onPress={() => playMusic(item)}
               >
                 <Image source={{ uri: item.image }} className="w-32 h-24 rounded-lg mr-4" />
                 <View className="flex-1">
@@ -139,11 +170,45 @@ export default function Index() {
             </View>
 
             {expandedId === item.id && (
-              <View className="mt-4">
-                <MusicPlayer musicUrl={item.music} />
-                {/* <Button
+              <View className="flex-row items-start justify-between px-2 mt-4">
+                <TouchableOpacity
+                  onPress={() => playMusic(item)}
+                  className="bg-green-300 rounded-full">
+
+                  <MaterialIcons name="play-arrow" color="green" size={50} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handlePresses(item.id, "edit")}
+                  className="bg-blue-300 rounded-full">
+
+                  <MaterialIcons name="drive-file-rename-outline" color={"blue"} size={50} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  className="e rounded-full">
+
+                  <MaterialIcons name="save" size={50} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
                   onPress={() => handlePresses(item.id, "delete")}
-                >Delete</Button> */}
+                  className="bg-red-300 rounded-full">
+
+                  <MaterialIcons name="delete-forever" color="red" size={50} />
+                  {
+                    editing ?
+                      <EditText
+                        visible={editing}
+                        onClose={() => setEditing(false)}
+                        Song={item}
+                      />
+                      :
+                      null
+                  }
+                </TouchableOpacity>
+
+
               </View>
             )}
           </View>

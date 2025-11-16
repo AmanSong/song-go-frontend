@@ -5,6 +5,7 @@ import { useLocalSearchParams } from "expo-router";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Button } from "@react-navigation/elements";
+import Index from ".";
 
 interface MusicFile {
     id: string;
@@ -22,7 +23,6 @@ export default function Player() {
     );
     const [currentTrack, setCurrentTrack] = useState(musicList[currentIndex]);
     const [hidden, setHidden] = useState(false);
-
 
     const handlePrevious = () => {
         setCurrentIndex(prev => (prev > 0 ? prev - 1 : musicList.length - 1));
@@ -58,18 +58,26 @@ export default function Player() {
                 source={{ uri: currentTrack?.image }}
                 className="flex-1 justify-center items-center bg-Secondary/10 rounded-lg">
 
-                <View className="justify-center items-center w-full h-96 p-2 bg-Primary/10 rounded-xl">
-                    <Image className="w-80 h-80" source={{ uri: currentTrack?.image }} />
+                <View className="justify-center items-center w-full h-96">
+
+                    <ImageBackground
+                        blurRadius={10}
+                        source={{ uri: currentTrack?.image }}
+                        className="h-72 w-96 justify-center items-center"
+                        borderRadius={5}>
+                        <Image className="w-80 h-44" source={{ uri: currentTrack?.image }} />
+                    </ImageBackground>
+
                 </View>
 
-                <FlatList className="w-full bg-Primary/50 rounded-xl mb-4 px-4 py-2" contentContainerStyle={{ flexGrow: 1 }}
+                <FlatList className="w-full rounded-xl px-3 mb-8" contentContainerStyle={{ flexGrow: 1 }}
                     data={musicList}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }: { item: MusicFile }) => (
-                        <View className={`flex-row items-center justify-between p-2 mb-2 rounded-xl border border-white/10 
+                        <View className={`flex-row items-center justify-between p-2 mb-2 rounded-3xl border border-white/10 
                             ${currentTrack?.id === item.id
-                                ? 'bg-Primary/70'
-                                : 'bg-Secondary'
+                                ? 'bg-Primary/90'
+                                : 'bg-Secondary/50'
                             }`}>
 
                             <TouchableOpacity onPress={() => selectMusic(item)}>
@@ -87,11 +95,11 @@ export default function Player() {
                     )}
                 />
 
-                <TouchableOpacity onPress={hidePlayer} activeOpacity={1} className="h-8 w-full justify-center items-center bg-Secondary rounded-t-xl">
+                <TouchableOpacity onPress={hidePlayer} activeOpacity={1} className="h-8 w-full justify-center items-center bg-Primary/30 rounded-t-xl">
                     <MaterialIcons size={36} color={"white"} name="arrow-drop-up"></MaterialIcons>
                 </TouchableOpacity>
 
-                <View className={`${hidden ? "opacity-0 h-0 pointer-events-none" : "opacity-100 h-58 w-full"} bg-Secondary `}>
+                <View className={`${hidden ? "opacity-0 h-0 pointer-events-none" : "opacity-100 h-58 w-full"} bg-Primary/30 `}>
                     <View className="h-16">
                         <Text numberOfLines={2} className="text-white text-base font-bold text-center px-8 mt-2">
                             {currentTrack?.name}

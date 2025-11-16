@@ -22,6 +22,7 @@ export default function VideoModal({ visible, onClose, video }: VideoModalProps)
                                 className="w-full rounded-lg overflow-visible p-6"
                                 resizeMode="cover"
                                 blurRadius={4}
+                                borderRadius={5}
                             >
                                 <View className="justify-center items-center bg-TransparentWhite rounded-lg p-4 overflow-visible">
                                     <Image
