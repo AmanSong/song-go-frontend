@@ -1,5 +1,6 @@
 import { Directory, File, FileHandle, Paths } from 'expo-file-system';
 import { v4 as uuidv4 } from 'uuid';
+import { Playlist } from '../(tabs)/profile';
 
 export const MusicManager = {
 
@@ -102,11 +103,94 @@ export const MusicManager = {
     const playlist = JSON.parse(json);
 
     if (!playlist.songIds.includes(songId)) {
-        playlist.songIds.push(songId);
+      playlist.songIds.push(songId);
     }
-
     playlistFile.write(JSON.stringify(playlist));
-}
+  },
+
+  async loadSongsFromPlaylist(playlist: Playlist) {
+    const musicDir = new Directory(Paths.document, 'music');
+
+    const songs = await Promise.all(
+      playlist.songIds.map(async (id) => {
+        const songDir = new Directory(musicDir, id);
+
+        const nameFile = new File(songDir, 'musicName.txt');
+        const audioFile = new File(songDir, 'audio.mp3');
+        const coverFile = new File(songDir, 'cover.jpg');
+
+        const name = nameFile.open();
+        return {
+          id,
+          title: name,
+          audioUri: audioFile.uri,
+          coverUri: coverFile.exists ? coverFile.uri : null
+        };
+      })
+    );
+
+    return songs;
+  },
+
+  async loadPlaylistPreview(playlist: Playlist, limit = 4) {
+    const musicDir = new Directory(Paths.document, "music");
+
+    const previewSongs = playlist.songIds.slice(0, limit);
+
+    const songs = await Promise.all(
+      previewSongs.map(async (id) => {
+        const songDir = new Directory(musicDir, id);
+
+        const nameFile = new File(songDir, "musicName.txt");
+        const coverFile = new File(songDir, "cover.jpg");
+
+        const name = nameFile.open();
+
+        return {
+          id,
+          title: name,
+          coverUri: coverFile.exists ? coverFile.uri : null,
+        };
+      })
+    );
+
+    return songs;
+  },
+
+  async removeSongFromPlaylist(playlistId: string, songId: string) {
+    try {
+      const playlistsDir = new Directory(Paths.document, 'playlists');
+      const playlistFile = new File(playlistsDir, `${playlistId}.json`);
+
+      const json = await playlistFile.text();
+      const playlist = JSON.parse(json);
+      playlist.songIds = playlist.songIds.filter((id: string) => id !== songId);
+
+      playlistFile.write(JSON.stringify(playlist));
+    } catch (error) {
+      console.error('❌ Error removing song from playlist:', error);
+      throw error;
+    }
+  },
+
+  async deletePlaylist(playlistId: string) {
+    try {
+      const playlistsDir = new Directory(Paths.document, 'playlists');
+      const playlistFile = new File(playlistsDir, `${playlistId}.json`);  
+
+      if (playlistFile.exists) {
+        playlistFile.delete();
+        console.log(`✅ Deleted playlist: ${playlistId}`);
+        return true;
+      } else {
+        console.warn(`⚠️ Playlist file not found: ${playlistId}`);
+        return false;
+      } 
+    } catch (error) {
+      console.error('❌ Error deleting playlist:', error);
+      throw error;
+    }
+  },
 
 };
 

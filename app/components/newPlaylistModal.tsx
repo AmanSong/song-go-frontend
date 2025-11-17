@@ -54,7 +54,7 @@ export default function NewPlayList({ visible, onClose }: newPlayListProps) {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     className="justify-center items-center h-12 w-24 rounded-lg bg-Primary"
-                                    onPress={() => MusicManager.createPlaylist(name)}
+                                    onPress={() => {MusicManager.createPlaylist(name).then(() => onClose()); return true}}
                                 >
                                     <Text className="text-white font-medium">Save</Text>
                                 </TouchableOpacity>

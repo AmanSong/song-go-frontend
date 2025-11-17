@@ -35,6 +35,10 @@ export default function ListPlaylistModal({ visible, onClose, song }: ListPlayli
         onClose();
     }
 
+    function isSongInPlaylist(playlist: Playlist): boolean {
+        return playlist.songIds.includes(song.id);
+    }
+
     return (
         <SafeAreaProvider>
             <SafeAreaView className="flex-1">
@@ -43,8 +47,10 @@ export default function ListPlaylistModal({ visible, onClose, song }: ListPlayli
                     transparent
                     onRequestClose={onClose}
                 >
-                    <View className="flex-1 justify-center items-center bg-black/50">
-                        <View className="bg-white rounded-2xl w-11/12 max-w-md p-2 shadow-lg">
+                    <View className="flex-1 justify-center items-center bg-black/50" onTouchStart={() => onClose()}>
+
+                        <View className="bg-white rounded-2xl w-11/12 max-w-md p-2 shadow-lg" onTouchStart={(e) => e.stopPropagation()}>
+
                             <View className="flex-row justify-between items-center mb-4">
                                 <TouchableOpacity onPress={onClose} className="p-2">
                                     <Text className="text-2xl text-gray-500">×</Text>
@@ -62,12 +68,14 @@ export default function ListPlaylistModal({ visible, onClose, song }: ListPlayli
                                                 <Text className="text-white">{item.name}</Text>
                                             </View>
 
-                                            <MaterialIcons name="bookmark-outline" color={"white"} size={25}></MaterialIcons>
+                                            <MaterialIcons name={isSongInPlaylist(item) ? "bookmark" : "bookmark-outline"} color={"white"} size={25}></MaterialIcons>
                                         </TouchableOpacity>
                                     )}
                                 />
                             </View>
+
                         </View>
+                        
                     </View>
 
                 </Modal>

@@ -77,7 +77,7 @@ export default function Index() {
 
   const handleClose = () => {
     setEditing(false);
-    setOpenPlaylist(false)
+    setOpenPlaylist(false);
     listMusicFiles();
   }
 
@@ -165,7 +165,6 @@ export default function Index() {
             <View className="w-full pt-2">
               <TouchableOpacity className="flex-row items-start"
                 onPress={() => setExpandedId(prevId => prevId === item.id ? null : item.id)}
-              //onPress={() => playMusic(item)}
               >
                 <Image source={{ uri: item.image }} className="w-32 h-24 rounded-lg mr-4" />
                 <View className="flex-1">
