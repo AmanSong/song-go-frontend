@@ -27,7 +27,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlaye
             player.replace({uri: musicUrl});
         }
         else {
-            player.replace(null);
+            player.replace({uri: ''})
         }
     }, [musicUrl]);
 
@@ -84,7 +84,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlaye
 
     return (
         <View className="flex-1 items-center justify-center">
-            <View className="w-full max-w-sm px-8">
+            <View className="w-full px-8">
 
                 <View className="flex-row justify-between items-center w-full px-2 mt-2">
                     <Text className="text-white text-xs">{formatTime(position)}</Text>

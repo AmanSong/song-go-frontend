@@ -5,6 +5,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useSafeAreaInsets, } from 'react-native-safe-area-context';
 import NewPlayList from '../components/newPlaylistModal';
 import MusicManager from '../utils/musicManager';
+import { useRouter } from 'expo-router';
+import { MusicFile } from '../(tabs)';
 
 export type Playlist = {
   id: string;
@@ -14,6 +16,7 @@ export type Playlist = {
 
 export default function profile() {
   const Insets = useSafeAreaInsets();
+  const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [playlists, setPlaylists] = useState<Array<Playlist & { preview: any[] }>>([]);
   const [openMenuId, setOpenMenuId] = useState(null as string | null);
@@ -46,6 +49,38 @@ export default function profile() {
     setPlaylists(enhanced);
   }
 
+  async function playlistSelected(playlist: Playlist) {
+    try {
+      // Await the promise to get the actual music array
+      const songs = await MusicManager.loadSongsFromPlaylist(playlist);
+
+      // Resolve all name promises
+      const resolvedSongs = await Promise.all(
+        songs.map(async (song) => ({
+          ...song,
+          name: await song.name, // Await the Promise<string>
+        }))
+      );
+      const startIndex = resolvedSongs.length > 0 ? 0 : -1;
+
+      if (resolvedSongs.length === 0) {
+        return;
+      }
+
+      router.push({
+        pathname: "/player",
+        params: {
+          index: startIndex.toString(),
+          list: JSON.stringify(resolvedSongs),
+          playlistTitle: playlist.name,
+        },
+      });
+
+    } catch (error) {
+      console.error("Error loading playlist:", error);
+    }
+  }
+
   return (
     <View style={{ paddingTop: Insets.top }} className="flex-1 items-center justify-center bg-Dark">
 
@@ -76,10 +111,14 @@ export default function profile() {
             const extraCount = item.songIds.length - item.preview.length;
             const isMenuOpen = openMenuId === item.id;
 
-            return (
-              <TouchableOpacity style={{ zIndex: isMenuOpen ? 999 : 0 }} className="bg-Dark/90 mb-3 p-4 rounded-2xl shadow-lg shadow-black/50">
-                <View className="flex-row items-center space-x-4">
 
+            return (
+              <TouchableOpacity
+                onPress={() => playlistSelected(item)}
+                style={{ zIndex: isMenuOpen ? 999 : 0 }}
+                className="bg-Dark/90 mb-3 p-4 rounded-2xl shadow-lg shadow-black/50">
+
+                <View className="flex-row items-center space-x-4">
                   {/* Preview Thumbnails - Improved Grid */}
                   <View className="w-24 h-24 bg-Primary/30 rounded-xl overflow-hidden">
                     <View className="flex-1 flex-row flex-wrap">
@@ -132,7 +171,7 @@ export default function profile() {
                         <TouchableOpacity
                           onPress={() => { console.log("Rename"); }}
                           className="px-4 py-3 border-b border-white/10 active:bg-white/5"
-                          
+
                         >
                           <Text className="text-white text-base">Rename</Text>
                         </TouchableOpacity>
@@ -147,6 +186,7 @@ export default function profile() {
                     )}
                   </View>
                 </View>
+
               </TouchableOpacity>
             );
           }}

@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, Text, Insets, TouchableOpacity, Image, FlatList, ImageBackground } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, FlatList, ImageBackground } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Button } from "@react-navigation/elements";
-import Index from ".";
 
 interface MusicFile {
     id: string;
@@ -16,13 +14,12 @@ interface MusicFile {
 
 export default function Player() {
     const insets = useSafeAreaInsets();
-    const { list, index } = useLocalSearchParams();
+    const { list, index, playlistTitle } = useLocalSearchParams();
     const musicList: MusicFile[] = typeof list === 'string' ? JSON.parse(list) : [];
     const [currentIndex, setCurrentIndex] = useState(
         typeof index === 'string' ? Number(index) : 0
     );
     const [currentTrack, setCurrentTrack] = useState(musicList[currentIndex]);
-    const [hidden, setHidden] = useState(false);
 
     const handlePrevious = () => {
         setCurrentIndex(prev => (prev > 0 ? prev - 1 : musicList.length - 1));
@@ -43,31 +40,25 @@ export default function Player() {
         setCurrentTrack(musicList[currentIndex]);
     }, [currentIndex, musicList]);
 
-
-    //
-    const hidePlayer = () => {
-        setHidden(!hidden);
-    }
-
-    //
-
     return (
         <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: '#1E1E1E' }}>
             <ImageBackground
-                blurRadius={50}
+                blurRadius={25}
                 source={{ uri: currentTrack?.image }}
                 className="flex-1 justify-center items-center bg-Secondary/10 rounded-lg">
 
-                <View className="justify-center items-center w-full h-96">
-
+                <View className="justify-center items-center w-full h-72">
                     <ImageBackground
                         blurRadius={10}
                         source={{ uri: currentTrack?.image }}
-                        className="h-72 w-96 justify-center items-center"
+                        className="h-64 w-96 justify-center items-center"
                         borderRadius={5}>
-                        <Image className="w-80 h-44" source={{ uri: currentTrack?.image }} />
+                        <Image className="w-72 h-40" source={{ uri: currentTrack?.image }} />
                     </ImageBackground>
+                </View>
 
+                <View className="flex-2 w-96 pb-1 pl-2">
+                    <Text className="text-xl text-white font-semibold">{playlistTitle ? playlistTitle : "All Songs"}</Text>
                 </View>
 
                 <FlatList className="w-full rounded-xl px-3 mb-8" contentContainerStyle={{ flexGrow: 1 }}
@@ -95,11 +86,11 @@ export default function Player() {
                     )}
                 />
 
-                <TouchableOpacity onPress={hidePlayer} activeOpacity={1} className="h-8 w-full justify-center items-center bg-Primary/30 rounded-t-xl">
+                <TouchableOpacity activeOpacity={1} className="h-8 w-full justify-center items-center bg-Primary/30 rounded-t-xl">
                     <MaterialIcons size={36} color={"white"} name="arrow-drop-up"></MaterialIcons>
                 </TouchableOpacity>
 
-                <View className={`${hidden ? "opacity-0 h-0 pointer-events-none" : "opacity-100 h-58 w-full"} bg-Primary/30 `}>
+                <View className={`bg-Primary/30 `}>
                     <View className="h-16">
                         <Text numberOfLines={2} className="text-white text-base font-bold text-center px-8 mt-2">
                             {currentTrack?.name}

@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@react-navigation/elements";
 import { MusicManager } from "../utils/musicManager"
 import { useFocusEffect } from "@react-navigation/native";
-import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import EditText from "../components/editTextModal";

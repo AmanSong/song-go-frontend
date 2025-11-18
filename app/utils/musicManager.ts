@@ -119,12 +119,12 @@ export const MusicManager = {
         const audioFile = new File(songDir, 'audio.mp3');
         const coverFile = new File(songDir, 'cover.jpg');
 
-        const name = nameFile.open();
+        const name = nameFile.text();
         return {
           id,
-          title: name,
-          audioUri: audioFile.uri,
-          coverUri: coverFile.exists ? coverFile.uri : null
+          name: name,
+          music: audioFile.uri,
+          image: coverFile.exists ? coverFile.uri : null
         };
       })
     );
