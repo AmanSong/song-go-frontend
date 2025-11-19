@@ -8,9 +8,10 @@ interface MusicPlayerProps {
     musicUrl?: string;
     onPrevious?: () => void;
     onNext?: () => void;
+    onPlayStateChange?: (playing: boolean) => void;
 }
 
-export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlayerProps) {
+export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateChange }: MusicPlayerProps) {
     // Allow local file playback
     musicUrl = musicUrl?.replace("file:///", "/");
 
@@ -59,6 +60,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlaye
             player.play();
         }
         setIsPlaying(player.playing)
+        onPlayStateChange && onPlayStateChange(player.playing);
     };
 
     const onSlidingStart = () => {
@@ -118,6 +120,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious }: MusicPlaye
                         <MaterialIcons name="skip-next" size={40} color={"#DA7676"} />
                     </TouchableOpacity>
                 </View>
+
             </View>
         </View>
     );

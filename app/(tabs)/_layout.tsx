@@ -4,7 +4,7 @@ import SpecialTabButton from "@/app/components/specialTabButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
-import 'react-native-get-random-values'
+
 
 function CustomTabs() {
     const insets = useSafeAreaInsets();

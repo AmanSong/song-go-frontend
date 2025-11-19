@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, Image, FlatList, ImageBackground } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
+import { usePlayer } from "../context/playerContext";
 
 interface MusicFile {
     id: string;
@@ -12,33 +14,66 @@ interface MusicFile {
     image?: any;
 }
 
-export default function Player() {
+function FullPlayer() {
     const insets = useSafeAreaInsets();
     const { list, index, playlistTitle } = useLocalSearchParams();
+    
+    const {
+        setCurrentTrack,
+        setIsPlaying,
+        setMusicList,
+        setCurrentIndex
+    } = usePlayer();
+
     const musicList: MusicFile[] = typeof list === 'string' ? JSON.parse(list) : [];
-    const [currentIndex, setCurrentIndex] = useState(
+    const [currentIndex, setLocalCurrentIndex] = useState(
         typeof index === 'string' ? Number(index) : 0
     );
-    const [currentTrack, setCurrentTrack] = useState(musicList[currentIndex]);
+    const [currentTrack, setLocalCurrentTrack] = useState(musicList[currentIndex]);
+    const [hidden, setHidden] = useState(false);
+
+    // Initialize global state
+    useEffect(() => {
+        setMusicList(musicList);
+        setCurrentIndex(currentIndex);
+        setCurrentTrack(musicList[currentIndex]);
+    }, []);
 
     const handlePrevious = () => {
-        setCurrentIndex(prev => (prev > 0 ? prev - 1 : musicList.length - 1));
+        const newIndex = currentIndex > 0 ? currentIndex - 1 : musicList.length - 1;
+        setLocalCurrentIndex(newIndex);
+        setCurrentIndex(newIndex);
     };
 
     const handleNext = () => {
-        setCurrentIndex(prev => (prev < musicList.length - 1 ? prev + 1 : 0));
+        const newIndex = currentIndex < musicList.length - 1 ? currentIndex + 1 : 0;
+        setLocalCurrentIndex(newIndex);
+        setCurrentIndex(newIndex);
     };
 
     const selectMusic = (music: MusicFile) => {
         const trackIndex = musicList.findIndex(track => track.id === music.id);
+        setLocalCurrentIndex(trackIndex);
         setCurrentIndex(trackIndex);
+        setLocalCurrentTrack(music);
         setCurrentTrack(music);
+    }
+
+    const hidePlayer = () => {
+        setHidden(!hidden);
     }
 
     // Sync currentTrack when currentIndex changes
     useEffect(() => {
-        setCurrentTrack(musicList[currentIndex]);
+        const track = musicList[currentIndex];
+        setLocalCurrentTrack(track);
+        setCurrentTrack(track);
     }, [currentIndex, musicList]);
+
+    // Handle play/pause state (you'll need to update this based on your MusicPlayer component)
+    const handlePlayStateChange = (playing: boolean) => {
+        setIsPlaying(playing);
+    };
 
     return (
         <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: '#1E1E1E' }}>
@@ -86,11 +121,13 @@ export default function Player() {
                     )}
                 />
 
-                <TouchableOpacity activeOpacity={1} className="h-8 w-full justify-center items-center bg-Primary/30 rounded-t-xl">
+                <TouchableOpacity
+                    onPress={hidePlayer} activeOpacity={1}
+                    className={`${hidden ? "h-16" : "h-8"} w-full justify-center items-center bg-Primary/30 rounded-t-xl`}>
                     <MaterialIcons size={36} color={"white"} name="arrow-drop-up"></MaterialIcons>
                 </TouchableOpacity>
 
-                <View className={`bg-Primary/30 `}>
+                <View className={`${hidden ? "opacity-0 h-0 pointer-events-none" : "opacity-100 h-58 w-full"} bg-Primary/30 `}>
                     <View className="h-16">
                         <Text numberOfLines={2} className="text-white text-base font-bold text-center px-8 mt-2">
                             {currentTrack?.name}
@@ -101,11 +138,31 @@ export default function Player() {
                             musicUrl={currentTrack?.music}
                             onPrevious={handlePrevious}
                             onNext={handleNext}
+                            onPlayStateChange={handlePlayStateChange}
                         />
                     </View>
                 </View>
+
             </ImageBackground>
 
         </View>
     );
+}
+
+export default function Player() {
+    const { setShowMiniPlayer } = usePlayer();
+
+    // to check if player is focused or not
+    useFocusEffect(
+        useCallback(() => {
+            // do nothing
+            setShowMiniPlayer(false);
+            return () => {
+                console.log("Player unfocused")
+                setShowMiniPlayer(true);
+            };
+        }, [])
+    );
+
+    return <FullPlayer />;
 }
