@@ -43,6 +43,16 @@ export default function Index() {
     });
   }
 
+  function playSingleMusic(item: MusicFile) {
+    router.push({
+      pathname: "/player",
+      params: {
+        index: 0,
+        list: JSON.stringify([item]),
+      },
+    });
+  }
+
   function handlePresses(songID: string, type: string) {
     if (type === "delete") {
       const showConfirmationAlert = () => {
@@ -178,7 +188,7 @@ export default function Index() {
               <View className="flex-row items-start justify-between px-2 mt-4">
                 {/* Play music */}
                 <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
-                  onPress={() => playMusic(item)}>
+                  onPress={() => playSingleMusic(item)}>
                   <MaterialIcons name="play-arrow" color={"#DA7676"} size={35} />
                 </TouchableOpacity>
 

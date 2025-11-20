@@ -63,16 +63,15 @@ function FullPlayer() {
         setHidden(!hidden);
     }
 
-    // Sync currentTrack when currentIndex changes
     useEffect(() => {
         const track = musicList[currentIndex];
         setLocalCurrentTrack(track);
         setCurrentTrack(track);
     }, [currentIndex, musicList]);
 
-    // Handle play/pause state (you'll need to update this based on your MusicPlayer component)
     const handlePlayStateChange = (playing: boolean) => {
         setIsPlaying(playing);
+        console.log("Play state changed:", playing);
     };
 
     return (
@@ -155,10 +154,8 @@ export default function Player() {
     // to check if player is focused or not
     useFocusEffect(
         useCallback(() => {
-            // do nothing
             setShowMiniPlayer(false);
             return () => {
-                console.log("Player unfocused")
                 setShowMiniPlayer(true);
             };
         }, [])

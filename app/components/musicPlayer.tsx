@@ -1,27 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import { AudioPlayer, useAudioPlayer } from "expo-audio";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Slider from "@react-native-community/slider";
+import { usePlayer } from "../context/playerContext";
 
 interface MusicPlayerProps {
     musicUrl?: string;
     onPrevious?: () => void;
     onNext?: () => void;
     onPlayStateChange?: (playing: boolean) => void;
+    handlePlayPause?: () => void;
 }
 
 export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateChange }: MusicPlayerProps) {
     // Allow local file playback
     musicUrl = musicUrl?.replace("file:///", "/");
 
-    const [isPlaying, setIsPlaying] = useState(false);
+    //const [isPlaying, setIsPlaying] = useState(false);
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isSeeking, setIsSeeking] = useState(false);
     
     let player: AudioPlayer;
     player = useAudioPlayer(null);
+
+    const { setAudioRef, isPlaying } = usePlayer();
+
+    useEffect(() => {
+        setAudioRef({
+            play: () => player.play(),
+            pause: () => player.pause()
+        });
+    }, []);
+
+    // Now react when miniPlayer changes context
+    useEffect(() => {
+        if (isPlaying) player.play();
+        else player.pause();
+    }, [isPlaying]);
 
     useEffect(() => {
         if(musicUrl) {
@@ -59,7 +76,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
         } else {
             player.play();
         }
-        setIsPlaying(player.playing)
+        setAudioRef(player.playing)
         onPlayStateChange && onPlayStateChange(player.playing);
     };
 
