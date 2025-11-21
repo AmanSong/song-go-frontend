@@ -20,7 +20,7 @@ export default function VideoPreview(Video: YouTubeVideo) {
             }
         };
         const interval = setInterval(checkLoaded, 100);
-        checkLoaded(); 
+        checkLoaded();
         return () => clearInterval(interval);
     }, [player, isLoaded]);
 
@@ -34,16 +34,21 @@ export default function VideoPreview(Video: YouTubeVideo) {
     };
 
     return (
-        <View className="flex-row items-start px-8">
-            <TouchableOpacity onPress={() => handlePlayPause()}>
-                {
-                    isLoaded ? <MaterialIcons
-                        name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
-                        size={36} color="#3C3636"
-                    /> : <ActivityIndicator color={"#3C3636"} size={36}></ActivityIndicator>
-                }
-            </TouchableOpacity>
-            <Downloader id={Video.id.videoId} title={Video.snippet.title} image={Video.snippet.thumbnails.high.url}></Downloader>
+        <View className="flex-row justify-between items-start w-10/12 p-1 bg-white/10 rounded-2xl my-2 mx-auto">
+            <View  className="bg-Primary/90 w-24 items-center rounded-2xl">
+                <TouchableOpacity  onPress={() => handlePlayPause()}>
+                    {
+                        isLoaded ? <MaterialIcons
+                            name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
+                            size={50} color="#3C3636"
+                        /> : <ActivityIndicator color={"#3C3636"} size={50}></ActivityIndicator>
+                    }
+                </TouchableOpacity>
+            </View>
+
+            <View className="bg-Primary/90 w-24 rounded-2xl">
+                <Downloader id={Video.id.videoId} title={Video.snippet.title} image={Video.snippet.thumbnails.high.url}></Downloader>
+            </View>
         </View>
     )
 }

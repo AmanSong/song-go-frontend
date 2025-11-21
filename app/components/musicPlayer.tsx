@@ -34,7 +34,6 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
         });
     }, []);
 
-    // Now react when miniPlayer changes context
     useEffect(() => {
         if (isPlaying) player.play();
         else player.pause();
@@ -60,7 +59,11 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
             interval = setInterval(() => {
                 if (player.isLoaded) {
                     setPosition(player.currentTime || 0);
+                    if(Math.floor(player.currentTime || 0) >= Math.floor(duration)) {
+                        onNext && onNext();
+                    }
                 }
+
             }, 250);
         }
 

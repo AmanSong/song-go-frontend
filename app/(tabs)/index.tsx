@@ -9,6 +9,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import EditText from "../components/editTextModal";
 import ListPlaylistModal from "../components/listPlaylistsModal";
+import SearchBar from "../components/searchBar";
 
 export interface MusicFile {
   id: string;
@@ -33,11 +34,11 @@ export default function Index() {
     }, [])
   );
 
-  function playMusic(item: MusicFile) {
+  function playAllMusic() {
     router.push({
       pathname: "/player",
       params: {
-        index: music.findIndex((m) => m.id === item.id),
+        index: 0,
         list: JSON.stringify(music),
       },
     });
@@ -163,13 +164,22 @@ export default function Index() {
 
 
   return (
-    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#1E1E1E' }}>
+    <View className="flex-1" style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#1E1E1E' }}>
+
+      <View className="flex-row justify-center items-center h-16 bg-Primary/50 m-2 rounded-full">
+        <TouchableOpacity 
+          onPress={() => playAllMusic()}
+          className="bg-Dark/50 h-12 w-12 rounded-full justify-center items-center">
+          <MaterialIcons name="play-arrow" color={"#DA7676"} size={35} />
+        </TouchableOpacity>
+      </View>
+
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
         data={music}
         keyExtractor={(item, index) => `${item.name}-${index}`}
         renderItem={({ item }: { item: MusicFile }) => (
-          <View className=" p-4 border-b border-gray-700">
+          <View className="p-4 border-b border-gray-700">
 
             <View className="w-full pt-2">
               <TouchableOpacity className="flex-row items-start"

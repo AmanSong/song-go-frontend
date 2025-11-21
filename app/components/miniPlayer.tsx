@@ -11,7 +11,6 @@ export default function MiniPlayer() {
         currentTrack,
         isPlaying,
         showMiniPlayer,
-        setShowMiniPlayer,
         setIsPlaying,
         musicList,
         stopAndClear

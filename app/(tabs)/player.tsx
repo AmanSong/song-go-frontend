@@ -71,7 +71,6 @@ function FullPlayer() {
 
     const handlePlayStateChange = (playing: boolean) => {
         setIsPlaying(playing);
-        console.log("Play state changed:", playing);
     };
 
     return (

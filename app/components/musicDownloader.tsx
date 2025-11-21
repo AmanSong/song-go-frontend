@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Directory, File, Paths } from 'expo-file-system';
+import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { useDownload } from '../context/downloadContext'; 
 
 interface DownloadProps {
     id: string;
@@ -19,6 +21,15 @@ interface SongMetadata {
 export default function Downloader({ id, title, image }: DownloadProps) {
     const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
     const [isDownloading, setIsDownloading] = useState(false);
+    
+    // Use the download context
+    const { 
+        startDownloadProgress, 
+        updateDownloadProgress, 
+        completeDownload, 
+        errorDownload,
+
+    } = useDownload();
 
     async function download(): Promise<SongMetadata | void> {
         if (!id) {
@@ -28,6 +39,7 @@ export default function Downloader({ id, title, image }: DownloadProps) {
 
         try {
             setIsDownloading(true);
+            startDownloadProgress();
 
             // Get / create the main music folder
             const musicDir = new Directory(Paths.document, 'music');
@@ -45,14 +57,21 @@ export default function Downloader({ id, title, image }: DownloadProps) {
             musicName.create();
             musicName.write(title);
 
-            // Download audio
+            // Download audio with progress tracking
             const musicFile = new File(songDir, 'audio.mp3');
             const musicUrl = `http://${SERVER_IP}/api/video/download/${id}`;
-            console.log("DOWNLOADING" + musicUrl)
+            console.log("DOWNLOADING: " + musicUrl);
+            
+            
+            updateDownloadProgress(10);
+
+            // Download audio file
             const downloadResult = await File.downloadFileAsync(musicUrl, musicFile);
             if (!downloadResult.exists) {
                 throw new Error('Audio download failed');
             }
+
+            updateDownloadProgress(60);
 
             // Optional cover image
             let coverUri: string | undefined = undefined;
@@ -62,22 +81,23 @@ export default function Downloader({ id, title, image }: DownloadProps) {
                     const coverResult = await File.downloadFileAsync(image, coverFile);
                     if (coverResult.exists) {
                         coverUri = coverFile.uri;
+                        updateDownloadProgress(90);
                     } else {
                         console.warn('Cover download failed');
-                        setIsDownloading(false);
-                        alert('Cover download failed');
                     }
                 } catch (err) {
                     console.warn('Cover download error:', err);
                 }
             }
 
+           
+            updateDownloadProgress(100);
+            completeDownload();
             setIsDownloading(false);
-            alert(`Finished downloading ${title}`);
 
         } catch (err) {
             console.error('Download failed:', err);
-            alert('Download failed');
+            errorDownload();
             setIsDownloading(false);
         }
     }
@@ -87,9 +107,9 @@ export default function Downloader({ id, title, image }: DownloadProps) {
             <View style={{ justifyContent: 'center', alignItems: 'center', width: '100%', borderRadius: 8 }}>
                 {
                     isDownloading ?
-                    <ActivityIndicator size={36} color={"#3C3636"}></ActivityIndicator>
+                    <ActivityIndicator size={50} color={"#3C3636"}></ActivityIndicator>
                     :
-                    <MaterialIcons name="download-for-offline" size={36} color="#3C3636" />
+                    <MaterialIcons name="download-for-offline" size={50} color="#3C3636" />
                 }
             </View>
         </TouchableOpacity>

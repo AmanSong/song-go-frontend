@@ -6,6 +6,7 @@ import searchYouTube from "../utils/youtubeUtility";
 import { YouTubeVideo } from "../utils/youtubeUtility";
 import VideoModal from "../components/videoModal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ImageBackground } from 'react-native';
 
 interface Video {
     id: {
@@ -24,6 +25,20 @@ interface Video {
     };
 }
 
+function LogoBackground() {
+    return (
+        <ImageBackground
+            source={require('../../assets/images/SongGo_Logo.png')}
+            style={{
+                flex: 1,
+                opacity: 0.1,
+                transform: [{ scale: 0.7 }]
+            }}
+            resizeMode="contain" 
+            className="absolute inset-0 z-0" 
+        />
+    )
+}
 export default function Download() {
     const insets = useSafeAreaInsets();
 
@@ -45,6 +60,8 @@ export default function Download() {
 
     return (
         <View style={{ flex: 1, paddingTop: insets.top }} className="bg-Dark flex-1">
+            <LogoBackground />
+
             <FlatList contentContainerStyle={{ flexGrow: 1 }}
                 // Search Bar as Sticky Header
                 ListHeaderComponent={
