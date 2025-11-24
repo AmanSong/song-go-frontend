@@ -5,8 +5,8 @@ import { MusicManager } from "../utils/musicManager"
 import { useFocusEffect } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
-import EditText from "../components/editTextModal";
-import ListPlaylistModal from "../components/listPlaylistsModal";
+import EditText from "../components/modals/editTextModal";
+import ListPlaylistModal from "../components/modals/listPlaylistsModal";
 import SearchBar from "../components/searchBar";
 import { MusicFile } from "../utils/musicManager";
 

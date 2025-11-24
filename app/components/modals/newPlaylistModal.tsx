@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, View, TouchableOpacity, Text, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import MusicManager from "../utils/musicManager";
-import { MusicFile } from "../utils/musicManager";
+import MusicManager from "../../utils/musicManager";
+import { MusicFile } from "../../utils/musicManager";
 
 interface newPlayListProps {
     visible: boolean;

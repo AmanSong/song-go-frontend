@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Modal, Text, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import MusicManager from "../utils/musicManager";
+import MusicManager from "../../utils/musicManager";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { MusicFile } from "../utils/musicManager";
+import { MusicFile } from "../../utils/musicManager";
 
 interface ListPlaylistProps {
     visible: boolean;

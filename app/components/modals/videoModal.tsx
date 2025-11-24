@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, View, Text, Image, ImageBackground } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { YouTubeVideo } from "../utils/youtubeUtility";
-import VideoPreview from "./videoPreview";
+import { YouTubeVideo } from "../../utils/youtubeUtility";
+import VideoPreview from "../videoPreview";
 
 interface VideoModalProps {
     visible: boolean;

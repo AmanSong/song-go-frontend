@@ -3,9 +3,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useSafeAreaInsets, } from 'react-native-safe-area-context';
-import NewPlayList from '../components/newPlaylistModal';
+import NewPlayList from '../components/modals/newPlaylistModal';
 import MusicManager from '../utils/musicManager';
 import { useRouter } from 'expo-router';
+import LoginModal from '../components/modals/loginModal';
 
 export type Playlist = {
   id: string;
@@ -19,6 +20,7 @@ export default function profile() {
   const [openModal, setOpenModal] = useState(false);
   const [playlists, setPlaylists] = useState<Array<Playlist & { preview: any[] }>>([]);
   const [openMenuId, setOpenMenuId] = useState(null as string | null);
+  const [openLogin, setOpenLogin] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -89,7 +91,8 @@ export default function profile() {
             <Text>New PlayList +</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="justify-center items-center bg-Primary rounded-full w-12 h-12">
+          {/* // login button */}
+          <TouchableOpacity onPress={() => setOpenLogin(!openLogin)} className="justify-center items-center bg-Primary rounded-full w-12 h-12">
             <MaterialIcons name="person-outline" size={35} />
           </TouchableOpacity>
         </View>
@@ -196,6 +199,14 @@ export default function profile() {
       {
         openModal ?
           <NewPlayList visible={openModal} onClose={() => { setOpenModal(!openModal); load(); }}
+          />
+          :
+          null
+      }
+
+      {
+        openLogin ?
+          <LoginModal visible={openLogin} onClose={() => { setOpenLogin(!openLogin); }}
           />
           :
           null

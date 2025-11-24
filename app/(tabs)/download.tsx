@@ -4,7 +4,7 @@ import { Image } from "react-native";
 import SearchBar from "../components/searchBar";
 import searchYouTube from "../utils/youtubeUtility";
 import { YouTubeVideo } from "../utils/youtubeUtility";
-import VideoModal from "../components/videoModal";
+import VideoModal from "../components/modals/videoModal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ImageBackground } from 'react-native';
 
