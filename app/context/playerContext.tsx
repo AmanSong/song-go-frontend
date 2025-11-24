@@ -36,7 +36,7 @@ export const PlayerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [musicList, setMusicList] = useState<MusicFile[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    // generic audio ref (works for expo-audio audio player object)
+    // generic audio ref
     const audioRef = useRef<any>(null);
 
     const setAudioRef = (ref: any) => {
@@ -117,36 +117,36 @@ export const PlayerProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         }
     };
 
-        return (
-            <PlayerContext.Provider
-                value={{
-                    currentTrack,
-                    isPlaying: isPlayingMini,
-                    showMiniPlayer,
-                    setCurrentTrack,
-                    setIsPlaying,
-                    setShowMiniPlayer,
-                    musicList,
-                    setMusicList,
-                    currentIndex,
-                    setCurrentIndex,
-                    setAudioRef,
-                    play,
-                    pause,
-                    togglePlay,
-                    stopAndClear
-                }}
-            >
-                {children}
-            </PlayerContext.Provider>
-        );
-    };
+    return (
+        <PlayerContext.Provider
+            value={{
+                currentTrack,
+                isPlaying: isPlayingMini,
+                showMiniPlayer,
+                setCurrentTrack,
+                setIsPlaying,
+                setShowMiniPlayer,
+                musicList,
+                setMusicList,
+                currentIndex,
+                setCurrentIndex,
+                setAudioRef,
+                play,
+                pause,
+                togglePlay,
+                stopAndClear
+            }}
+        >
+            {children}
+        </PlayerContext.Provider>
+    );
+};
 
-    export const usePlayer = () => {
-        const context = useContext(PlayerContext);
+export const usePlayer = () => {
+    const context = useContext(PlayerContext);
 
-        if (context === undefined) {
-            throw new Error('usePlayer must be used within a PlayerProvider');
-        }
-        return context;
-    };
+    if (context === undefined) {
+        throw new Error('usePlayer must be used within a PlayerProvider');
+    }
+    return context;
+};

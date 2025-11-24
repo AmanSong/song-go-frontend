@@ -2,7 +2,77 @@ import { Directory, File, FileHandle, Paths } from 'expo-file-system';
 import { v4 as uuidv4 } from 'uuid';
 import { Playlist } from '../(tabs)/profile';
 
+export interface MusicFile {
+  id: string;
+  name: string;
+  music?: any;
+  image?: any;
+}
+
 export const MusicManager = {
+
+  async listMusicFiles() {
+    try {
+      const musicDir = new Directory(Paths.document, 'music');
+      if (!musicDir.exists) {
+        console.log('Music folder does not exist.');
+        return;
+      }
+
+      const songFolders = musicDir.list();
+      const musicFiles: MusicFile[] = [];
+
+      for (const i in songFolders) {
+        const folder = songFolders[i];
+        if (!folder.exists) continue;
+
+        const folderDir = new Directory(folder.uri);
+        const folderContents = folderDir.list();
+
+        const audioFile = folderContents.find(f => f.name === 'audio.mp3');
+        const nameFile = folderContents.find(f => f.name === 'musicName.txt');
+        const imageFile = folderContents.find(f => f.name === 'cover.jpg');
+
+        let file_name = '';
+        let file_music;
+        let file_image;
+        if (nameFile) {
+          try {
+            const file = new File(nameFile.uri);
+            file_name = (await file.text()).trim()
+          } catch (error) {
+            console.error(`Error reading name file in folder ${folder.name}:`, error);
+          }
+        }
+        if (audioFile) {
+          try {
+            file_music = audioFile.uri;
+          } catch (error) {
+            console.error(`Error reading bytes file in folder ${folder.name}:`, error);
+          }
+        }
+        if (imageFile) {
+          try {
+            file_image = imageFile.uri;
+          }
+          catch (error) {
+            console.error(`Error reading bytes file in folder ${folder.name}:`, error);
+          }
+        }
+
+        musicFiles.push({
+          id: folderDir.name,
+          name: file_name,
+          music: file_music,
+          image: file_image
+        });
+      }
+      return musicFiles;
+
+    } catch (error) {
+      console.error('Error listing music files:', error);
+    }
+  },
 
   async deleteMusic(songId: string) {
     try {
@@ -176,7 +246,7 @@ export const MusicManager = {
   async deletePlaylist(playlistId: string) {
     try {
       const playlistsDir = new Directory(Paths.document, 'playlists');
-      const playlistFile = new File(playlistsDir, `${playlistId}.json`);  
+      const playlistFile = new File(playlistsDir, `${playlistId}.json`);
 
       if (playlistFile.exists) {
         playlistFile.delete();
@@ -185,7 +255,7 @@ export const MusicManager = {
       } else {
         console.warn(`⚠️ Playlist file not found: ${playlistId}`);
         return false;
-      } 
+      }
     } catch (error) {
       console.error('❌ Error deleting playlist:', error);
       throw error;

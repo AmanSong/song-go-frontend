@@ -1,8 +1,7 @@
-import { Button } from "@react-navigation/elements";
 import React, { useState } from "react";
 import { View, Modal, TouchableOpacity, Text, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { MusicFile } from "../(tabs)";
+import { MusicFile } from "../utils/musicManager";
 import MusicManager from "../utils/musicManager";
 
 interface EditTextProps {
@@ -24,7 +23,7 @@ export default function EditText({ visible, onClose, Song }: EditTextProps) {
                 >
 
                     <View className="flex-1 justify-center items-center bg-black/50" onTouchStart={() => onClose()}>
-                    
+
                         <View className="bg-white rounded-2xl w-11/12 max-w-md p-6 shadow-lg" onTouchStart={(e) => e.stopPropagation()}>
 
                             <View className="flex-row justify-between items-center mb-4">

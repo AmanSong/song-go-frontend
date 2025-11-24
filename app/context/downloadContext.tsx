@@ -17,7 +17,7 @@ export const DownloadProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [isDownloadModalVisible, setIsDownloadModalVisible] = useState(false);
     const [downloadStatus, setDownloadStatus] = useState('idle'); // 'idle', 'downloading', 'completed', 'error'
 
-    const startDownload = () => {
+    const startDownloadProgress = () => {
         setIsDownloadModalVisible(true);
         setDownloadStatus('downloading');
         setDownloadProgress(0);
@@ -30,7 +30,7 @@ export const DownloadProvider: React.FC<{ children: ReactNode }> = ({ children }
     const completeDownload = () => {
         setDownloadStatus('completed');
         setDownloadProgress(100);
-        
+
         // Auto hide after 2 seconds
         setTimeout(() => {
             setIsDownloadModalVisible(false);
@@ -41,7 +41,7 @@ export const DownloadProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const errorDownload = () => {
         setDownloadStatus('error');
-        
+
         // Auto hide after 3 seconds
         setTimeout(() => {
             setIsDownloadModalVisible(false);
@@ -53,7 +53,7 @@ export const DownloadProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     return (
         <DownloadContext.Provider value={{
-            startDownloadProgress: startDownload,
+            startDownloadProgress,
             updateDownloadProgress,
             completeDownload,
             errorDownload,
@@ -62,7 +62,7 @@ export const DownloadProvider: React.FC<{ children: ReactNode }> = ({ children }
             downloadStatus: downloadStatus as 'idle' | 'downloading' | 'completed' | 'error',
         }}>
             {children}
-            
+
         </DownloadContext.Provider>
     );
 }

@@ -6,7 +6,6 @@ import { useSafeAreaInsets, } from 'react-native-safe-area-context';
 import NewPlayList from '../components/newPlaylistModal';
 import MusicManager from '../utils/musicManager';
 import { useRouter } from 'expo-router';
-import { MusicFile } from '../(tabs)';
 
 export type Playlist = {
   id: string;

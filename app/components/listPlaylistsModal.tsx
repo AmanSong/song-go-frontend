@@ -3,7 +3,7 @@ import { View, Modal, Text, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import MusicManager from "../utils/musicManager";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { MusicFile } from "../(tabs)";
+import { MusicFile } from "../utils/musicManager";
 
 interface ListPlaylistProps {
     visible: boolean;
@@ -75,7 +75,7 @@ export default function ListPlaylistModal({ visible, onClose, song }: ListPlayli
                             </View>
 
                         </View>
-                        
+
                     </View>
 
                 </Modal>

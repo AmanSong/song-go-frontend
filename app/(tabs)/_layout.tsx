@@ -11,6 +11,8 @@ function CustomTabs() {
 
     return (
         <Tabs
+            initialRouteName="index"
+            backBehavior="history"
             screenOptions={{
                 tabBarShowLabel: false,
                 headerShown: false,
