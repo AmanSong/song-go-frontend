@@ -1,8 +1,30 @@
 import React, { useState } from "react";
 import { Modal, View, TouchableOpacity, Text, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { loginUtility } from "@/app/utils/loginUtility";
 
 function LoginInputs() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    async function handleLogin() {
+        if (email === "") {
+            alert("Email can't be empty!");
+            return
+        }
+        if (password === "") {
+            alert("Password can't be empty!");
+            return
+        }
+
+        try {
+            loginUtility.handleLogin(email, password);
+        }
+        catch (error) {
+            console.error("Error during login:", error);
+        }
+    }
+
     return (
         <>
             <View className="justify-center items-center">
@@ -17,6 +39,7 @@ function LoginInputs() {
                         placeholder={"your@email.com"}
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        onChangeText={setEmail}
                     />
                 </View>
 
@@ -26,12 +49,13 @@ function LoginInputs() {
                         className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-6"
                         placeholder={"password"}
                         secureTextEntry
+                        onChangeText={setPassword}
                     />
                 </View>
             </View>
 
             <View className="justify-center items-center">
-                <TouchableOpacity className="mt-8 justify-center items-center bg-Primary h-10 w-10/12 rounded-lg">
+                <TouchableOpacity onPress={() => handleLogin()} className="mt-8 justify-center items-center bg-Primary h-10 w-10/12 rounded-lg">
                     <Text className="text-base font-medium text-white">Login</Text>
                 </TouchableOpacity>
             </View>
@@ -40,6 +64,34 @@ function LoginInputs() {
 }
 
 function SignUpInputs() {
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const passwordsMatch = password === confirmPassword;
+
+    async function handleSignUp() {
+        if (!passwordsMatch) {
+            alert("Passwords do not match!");
+            return;
+        }
+        if (email === "") {
+            alert("Email can't be empty!");
+            return
+        }
+        if (password === "") {
+            alert("Password can't be empty!");
+            return
+        }
+
+        try {
+            loginUtility.handleSignUp(name, email, password);
+        }
+        catch (error) {
+            console.error("Error during sign up:", error);
+        }
+    }
+
     return (
         <>
             <View className="justify-center items-center">
@@ -53,6 +105,7 @@ function SignUpInputs() {
                         className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-3"
                         placeholder={"name"}
                         secureTextEntry
+                        onChangeText={setName}
                     />
                 </View>
 
@@ -63,6 +116,7 @@ function SignUpInputs() {
                         placeholder={"your@email.com"}
                         keyboardType="email-address"
                         autoCapitalize="none"
+                        onChangeText={setEmail}
                     />
                 </View>
 
@@ -72,6 +126,7 @@ function SignUpInputs() {
                         className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-3"
                         placeholder={"password"}
                         secureTextEntry
+                        onChangeText={setPassword}
                     />
                 </View>
 
@@ -81,12 +136,13 @@ function SignUpInputs() {
                         className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-6"
                         placeholder={"confirm password"}
                         secureTextEntry
+                        onChangeText={setConfirmPassword}
                     />
                 </View>
             </View>
 
             <View className="justify-center items-center">
-                <TouchableOpacity className="mt-8 justify-center items-center bg-Primary h-10 w-10/12 rounded-lg">
+                <TouchableOpacity onPress={() => handleSignUp()} className="mt-8 justify-center items-center bg-Primary h-10 w-10/12 rounded-lg">
                     <Text className="text-base font-medium text-white">Create account</Text>
                 </TouchableOpacity>
             </View>

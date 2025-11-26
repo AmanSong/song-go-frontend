@@ -4,7 +4,7 @@ import './globals.css'
 import { PlayerProvider } from './context/playerContext';
 import MiniPlayer from '../app/components/miniPlayer';
 import { DownloadProvider } from "./context/downloadContext";
-import DownloadProgressModal from "./components/downloadStatus"; // Import the modal
+import DownloadProgressModal from "./components/downloadStatus";
 
 export default function RootLayout() {
   return (
