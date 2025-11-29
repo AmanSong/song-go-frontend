@@ -7,6 +7,7 @@ import NewPlayList from '../components/modals/newPlaylistModal';
 import MusicManager from '../utils/musicManager';
 import { useRouter } from 'expo-router';
 import LoginModal from '../components/modals/loginModal';
+import { useAuth } from '../utils/useAuth';
 
 export type Playlist = {
   id: string;
@@ -15,6 +16,9 @@ export type Playlist = {
 };
 
 export default function profile() {
+  //user details if logged in
+  const { user } = useAuth();
+
   const Insets = useSafeAreaInsets();
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
@@ -93,7 +97,11 @@ export default function profile() {
 
           {/* // login button */}
           <TouchableOpacity onPress={() => setOpenLogin(!openLogin)} className="justify-center items-center bg-Primary rounded-full w-12 h-12">
-            <MaterialIcons name="person-outline" size={35} />
+            {user ?
+              <Text>{user?.displayName}</Text>
+              :
+              <MaterialIcons name="person-outline" size={35} />
+            }
           </TouchableOpacity>
         </View>
       </View>

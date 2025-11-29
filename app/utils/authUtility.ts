@@ -1,6 +1,24 @@
-export const loginUtility = {
+export const authUtility = {
+
+    async getSession(token: string | null) {
+        if (!token) return { user: null, isAuthenticated: false };
+
+        try {
+            const res = await fetch(
+                `http://${process.env.EXPO_PUBLIC_IP_ADDRESS || "localhost:3000"}/api/user/session`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            const data = await res.json();
+            return data
+        } catch {
+            return { user: null, isAuthenticated: false };
+        }
+    },
 
     async handleLogin(email: string, password: string) {
+
         try {
             const response = await fetch(`http://${process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000'}/api/user/login`, {
                 method: 'POST',
@@ -13,7 +31,6 @@ export const loginUtility = {
                 throw new Error('Login failed');
             }
             const data = await response.json();
-            console.log('Login successful:', data);
             return data;
         } catch (error) {
             console.error('Error during login:', error);
@@ -34,7 +51,6 @@ export const loginUtility = {
                 throw new Error('Sign-up failed');
             }
             const data = await response.json();
-            console.log('Sign-up successful:', data);
             return data;
         } catch (error) {
             console.error('Error during sign-up:', error);

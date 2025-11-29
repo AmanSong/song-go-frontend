@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 import { Modal, View, TouchableOpacity, Text, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { loginUtility } from "@/app/utils/loginUtility";
+import { useAuth } from "@/app/utils/useAuth";
+import { authUtility } from "@/app/utils/authUtility";
 
-function LoginInputs() {
+function LoginInputs({ onClose }: { onClose: () => void }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth();
 
     async function handleLogin() {
-        if (email === "") {
-            alert("Email can't be empty!");
-            return
-        }
-        if (password === "") {
-            alert("Password can't be empty!");
-            return
+        if (!email || !password) {
+            alert("Please fill in all fields");
+            return;
         }
 
-        try {
-            loginUtility.handleLogin(email, password);
+        const success = await login(email, password);
+        if (success) {
+            alert("Login Successfully");
+            onClose();
         }
-        catch (error) {
-            console.error("Error during login:", error);
+        else {
+            alert("Login Failed");
+            return;
         }
     }
 
@@ -63,7 +64,7 @@ function LoginInputs() {
     )
 }
 
-function SignUpInputs() {
+function SignUpInputs({ onClose }: { onClose: () => void }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -84,11 +85,24 @@ function SignUpInputs() {
             return
         }
 
-        try {
-            loginUtility.handleSignUp(name, email, password);
+        const { data, error } = await authUtility.handleSignUp(name, email, password);
+
+        if (error) {
+            alert("An error has occurred while signing up");
+            console.error("Error: ", error);
         }
-        catch (error) {
-            console.error("Error during sign up:", error);
+
+        if (data) {
+            if (data.user.identities && data.user.identities.length === 0) {
+                alert("User already exists");
+                return;
+            }
+            if (!data.user.confirmed_at) {
+                alert(`Successfully signed up! Please check ${email} for verification link.`);
+            } else {
+                alert("Successfully signed up! You can now sign in.");
+            }
+            onClose();
         }
     }
 
@@ -172,7 +186,7 @@ export default function LoginModal({ visible, onClose }: { visible: boolean; onC
 
                             {onLogin ?
                                 <>
-                                    <LoginInputs />
+                                    <LoginInputs onClose={onClose} />
                                     <View className="flex-row justify-center items-center my-4">
                                         <Text>Not signed up?  </Text>
                                         <TouchableOpacity onPress={() => setOnLogin(!onLogin)}>
@@ -181,7 +195,7 @@ export default function LoginModal({ visible, onClose }: { visible: boolean; onC
                                     </View></>
                                 :
                                 <>
-                                    <SignUpInputs />
+                                    <SignUpInputs onClose={onClose} />
                                     <View className="flex-row justify-center items-center my-4">
                                         <Text>Already have an account?  </Text>
                                         <TouchableOpacity onPress={() => setOnLogin(!onLogin)}>
