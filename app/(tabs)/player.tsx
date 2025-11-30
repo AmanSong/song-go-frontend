@@ -17,45 +17,45 @@ interface MusicFile {
 function FullPlayer() {
     const insets = useSafeAreaInsets();
     const { list, index, playlistTitle } = useLocalSearchParams();
-    
+
     const {
+        currentTrack,
         setCurrentTrack,
+        currentIndex,
         setIsPlaying,
         setMusicList,
         setCurrentIndex
     } = usePlayer();
 
     const musicList: MusicFile[] = typeof list === 'string' ? JSON.parse(list) : [];
-    const [currentIndex, setLocalCurrentIndex] = useState(
-        typeof index === 'string' ? Number(index) : 0
-    );
-    const [currentTrack, setLocalCurrentTrack] = useState(musicList[currentIndex]);
     const [hidden, setHidden] = useState(false);
 
     // Initialize global state
     useEffect(() => {
         setMusicList(musicList);
-        setCurrentIndex(currentIndex);
-        setCurrentTrack(musicList[currentIndex]);
-    }, []);
+        if (musicList[currentIndex]) {
+            setCurrentTrack(musicList[currentIndex]);
+        }
+    }, [currentIndex, musicList, setCurrentTrack, setMusicList]);
+
 
     const handlePrevious = () => {
         const newIndex = currentIndex > 0 ? currentIndex - 1 : musicList.length - 1;
-        setLocalCurrentIndex(newIndex);
+        //setLocalCurrentIndex(newIndex);
         setCurrentIndex(newIndex);
     };
 
     const handleNext = () => {
         const newIndex = currentIndex < musicList.length - 1 ? currentIndex + 1 : 0;
-        setLocalCurrentIndex(newIndex);
+        //setLocalCurrentIndex(newIndex);
         setCurrentIndex(newIndex);
     };
 
     const selectMusic = (music: MusicFile) => {
         const trackIndex = musicList.findIndex(track => track.id === music.id);
-        setLocalCurrentIndex(trackIndex);
+        //setLocalCurrentIndex(trackIndex);
         setCurrentIndex(trackIndex);
-        setLocalCurrentTrack(music);
+        //setLocalCurrentTrack(music);
         setCurrentTrack(music);
     }
 
@@ -65,7 +65,7 @@ function FullPlayer() {
 
     useEffect(() => {
         const track = musicList[currentIndex];
-        setLocalCurrentTrack(track);
+        //setLocalCurrentTrack(track);
         setCurrentTrack(track);
     }, [currentIndex, musicList]);
 

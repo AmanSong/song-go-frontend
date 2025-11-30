@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { authUtility } from "../utils/authUtility";
 
-interface User {
+export interface User {
     id: string;
     email: string;
     displayName?: string;

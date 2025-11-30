@@ -14,39 +14,34 @@ interface MusicPlayerProps {
 }
 
 export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateChange }: MusicPlayerProps) {
-    // Allow local file playback
-    musicUrl = musicUrl?.replace("file:///", "/");
-
-    //const [isPlaying, setIsPlaying] = useState(false);
+    const normalizedUrl = musicUrl?.replace("file:///", "/");
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isSeeking, setIsSeeking] = useState(false);
-    
+
     let player: AudioPlayer;
     player = useAudioPlayer(null);
 
     const { setAudioRef, isPlaying } = usePlayer();
 
+    // Only set ref once
     useEffect(() => {
         setAudioRef({
             play: () => player.play(),
             pause: () => player.pause()
         });
-    }, []);
+    }, [player, setAudioRef]);
 
     useEffect(() => {
         if (isPlaying) player.play();
         else player.pause();
-    }, [isPlaying]);
+    }, [isPlaying, player]);
 
     useEffect(() => {
-        if(musicUrl) {
-            player.replace({uri: musicUrl});
+        if (normalizedUrl) {
+            player.replace({ uri: normalizedUrl });
         }
-        else {
-            player.replace({uri: ''})
-        }
-    }, [musicUrl]);
+    }, [normalizedUrl, player]);
 
     useEffect(() => {
         setDuration(player.duration || 0);
@@ -59,7 +54,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
             interval = setInterval(() => {
                 if (player.isLoaded) {
                     setPosition(player.currentTime || 0);
-                    if(Math.floor(player.currentTime || 0) >= Math.floor(duration)) {
+                    if (Math.floor(player.currentTime || 0) >= Math.floor(duration)) {
                         onNext && onNext();
                     }
                 }
@@ -70,7 +65,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [isPlaying, isSeeking, player]);
+    }, [isPlaying, isSeeking, player, duration]);
 
 
     const handlePlayPause = () => {

@@ -8,12 +8,41 @@ import MusicManager from '../utils/musicManager';
 import { useRouter } from 'expo-router';
 import LoginModal from '../components/modals/loginModal';
 import { useAuth } from '../utils/useAuth';
+import { User } from '../context/authContext';
 
 export type Playlist = {
   id: string;
   name: string;
   songIds: string[];
 };
+
+type UserMenuProps = { user: User };
+
+function UserMenu({user}: UserMenuProps) {
+  const {logout} = useAuth();
+
+  return (
+    <View className="absolute top-28 right-5 bg-Secondary border border-Primary/50 rounded-xl shadow-2xl shadow-black z-10 min-w-32">
+      <View className="px-4 py-3 border-b border-white/10 active:bg-white/5">
+        <Text className='text-white text-base'>{user.displayName}</Text>
+        <Text className='text-white text-base'>{user.email}</Text>
+      </View>
+
+
+      <TouchableOpacity
+        onPress={() => { logout() }}
+        className="px-4 py-3 border-b border-white/10 active:bg-white/5"
+      >
+        <View className='flex-row items-start'>
+          <Text className=" text-pink-300 text-base">
+            Sign Out
+          </Text>
+          <MaterialIcons className='ml-2' name="logout" size={20} color="pink" />
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+}
 
 export default function profile() {
   //user details if logged in
@@ -25,6 +54,7 @@ export default function profile() {
   const [playlists, setPlaylists] = useState<Array<Playlist & { preview: any[] }>>([]);
   const [openMenuId, setOpenMenuId] = useState(null as string | null);
   const [openLogin, setOpenLogin] = useState(false);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -96,7 +126,7 @@ export default function profile() {
           </TouchableOpacity>
 
           {/* // login button */}
-          <TouchableOpacity onPress={() => setOpenLogin(!openLogin)} className="justify-center items-center bg-Primary rounded-full w-12 h-12">
+          <TouchableOpacity onPress={() => { user ? setOpenUserMenu(!openUserMenu) : setOpenLogin(!openLogin) }} className="justify-center items-center bg-Primary rounded-full w-12 h-12">
             {user ?
               <Text>{user?.displayName}</Text>
               :
@@ -206,19 +236,24 @@ export default function profile() {
 
       {
         openModal ?
-          <NewPlayList visible={openModal} onClose={() => { setOpenModal(!openModal); load(); }}
-          />
+          <NewPlayList visible={openModal} onClose={() => { setOpenModal(!openModal); load(); }} />
           :
           null
       }
 
       {
-        openLogin ?
-          <LoginModal visible={openLogin} onClose={() => { setOpenLogin(!openLogin); }}
-          />
+        user ?
+          openUserMenu ?
+            <UserMenu user={user} />
+            :
+            null
           :
-          null
+          openLogin ?
+            <LoginModal visible={openLogin} onClose={() => { setOpenLogin(!openLogin); }} />
+            :
+            null
       }
+
     </View >
   );
 }
