@@ -1,4 +1,4 @@
-import { Directory, File, FileHandle, Paths } from 'expo-file-system';
+import { Directory, File, Paths } from 'expo-file-system';
 import { v4 as uuidv4 } from 'uuid';
 import { Playlist } from '../(tabs)/profile';
 
@@ -128,11 +128,10 @@ export const MusicManager = {
     const playlistsDir = new Directory(Paths.document, 'playlists');
 
     if (!playlistsDir.exists) {
-      playlistsDir.create({ intermediates: true });
+      await playlistsDir.create({ intermediates: true });
     }
 
     const id = uuidv4();
-
     const playlistFile = new File(playlistsDir, `${id}.json`);
 
     const data = {
@@ -141,8 +140,8 @@ export const MusicManager = {
       songIds: []
     };
 
-    playlistFile.create();
-    playlistFile.write(JSON.stringify(data));
+    await playlistFile.create();
+    await playlistFile.write(JSON.stringify(data));
 
     return id;
   },
@@ -150,16 +149,25 @@ export const MusicManager = {
   async loadPlaylists() {
     const playlistsDir = new Directory(Paths.document, 'playlists');
 
-    const files = playlistsDir.list();
-    const playlists = [];
+    if (!playlistsDir.exists) {
+      return [];
+    }
+
+    const files = await playlistsDir.list();
+    const playlists: any[] = [];
 
     for (const f of files) {
-      if (!f.name.endsWith('.json')) continue;
+      if (!f.name || !f.name.endsWith('.json')) continue;
 
-      const file = new File(playlistsDir, f.name);
-      const text = await file.text();
-
-      playlists.push(JSON.parse(text));
+      try {
+        const file = new File(playlistsDir, f.name);
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        playlists.push(parsed);
+      } catch (err) {
+        console.warn(`Skipping invalid playlist file ${f.name}:`, err);
+        continue;
+      }
     }
 
     return playlists;
@@ -214,7 +222,12 @@ export const MusicManager = {
         const nameFile = new File(songDir, "musicName.txt");
         const coverFile = new File(songDir, "cover.jpg");
 
-        const name = nameFile.open();
+        let name = "";
+        try {
+          name = nameFile.exists ? await nameFile.text() : "";
+        } catch (e) {
+          console.warn(`Failed to read name for song ${id}:`, e);
+        }
 
         return {
           id,
@@ -262,6 +275,41 @@ export const MusicManager = {
     }
   },
 
+  async renamePlaylist(playlistId: string, newName: string) {
+    try {
+      const playlistsDir = new Directory(Paths.document, 'playlists');
+      const playlistFile = new File(playlistsDir, `${playlistId}.json`);
+
+      if (!playlistFile.exists) {
+        console.warn(`⚠️ Playlist file not found: ${playlistId}`);
+        return false;
+      }
+
+      // read and parse current playlist JSON
+      const json = await playlistFile.text();
+      let playlist;
+      try {
+        playlist = JSON.parse(json);
+      } catch (e) {
+        console.error(`Invalid JSON in playlist ${playlistId}, aborting rename:`, e);
+        return false;
+      }
+
+      // update name and write back as JSON
+      playlist.name = newName;
+      playlistFile.write(JSON.stringify(playlist));
+
+      console.log(`✅ Renamed playlist: ${playlistId}`);
+      return true;
+    } catch (error) {
+      console.error('❌ Error renaming playlist:', error);
+      throw error;
+    }
+  },
+
+
 };
+
+
 
 export default MusicManager;

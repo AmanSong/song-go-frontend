@@ -1,6 +1,6 @@
 // components/DownloadToast.jsx
 import React from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import { useDownload } from '../context/downloadContext';
 
 export default function DownloadToast() {

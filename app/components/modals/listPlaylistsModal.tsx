@@ -19,15 +19,20 @@ type Playlist = {
 
 
 export default function ListPlaylistModal({ visible, onClose, song }: ListPlaylistProps) {
-    const [playlists, setPlaylists] = useState<Playlist[]>([]);
-
+    const [playlists, setPlaylists] = useState<Playlist[] | undefined>();
+    
     useEffect(() => {
         getPlayLists();
     }, []);
 
     async function getPlayLists() {
-        const data = await MusicManager.loadPlaylists();
-        setPlaylists(data);
+        try {
+            const data = await MusicManager.loadPlaylists();
+            setPlaylists(data);
+        }
+        catch {
+            return;
+        }
     }
 
     function addToPlaylist(playlistID: string) {

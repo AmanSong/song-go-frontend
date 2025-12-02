@@ -9,6 +9,8 @@ import { useRouter } from 'expo-router';
 import LoginModal from '../components/modals/loginModal';
 import { useAuth } from '../utils/useAuth';
 import { User } from '../context/authContext';
+import EditText from '../components/modals/editTextModal';
+import { databaseUtility } from '../utils/databaseUtility';
 
 export type Playlist = {
   id: string;
@@ -18,8 +20,8 @@ export type Playlist = {
 
 type UserMenuProps = { user: User };
 
-function UserMenu({user}: UserMenuProps) {
-  const {logout} = useAuth();
+function UserMenu({ user }: UserMenuProps) {
+  const { logout } = useAuth();
 
   return (
     <View className="absolute top-28 right-5 bg-Secondary border border-Primary/50 rounded-xl shadow-2xl shadow-black z-10 min-w-32">
@@ -28,6 +30,29 @@ function UserMenu({user}: UserMenuProps) {
         <Text className='text-white text-base'>{user.email}</Text>
       </View>
 
+      <TouchableOpacity
+        onPress={() => { databaseUtility.backup(user.id) }}
+        className="px-4 py-3 border-b border-white/10 active:bg-white/5"
+      >
+        <View className='flex-row items-start'>
+          <Text className=" text-white text-base">
+            Backup Data
+          </Text>
+          <MaterialIcons className='ml-2' name="sync" size={20} color="white" />
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => { console.log("hi") }}
+        className="px-4 py-3 border-b border-white/10 active:bg-white/5"
+      >
+        <View className='flex-row items-start'>
+          <Text className=" text-white text-base">
+            Retrieve Data
+          </Text>
+          <MaterialIcons className='ml-2' name="sync" size={20} color="white" />
+        </View>
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => { logout() }}
@@ -55,6 +80,7 @@ export default function profile() {
   const [openMenuId, setOpenMenuId] = useState(null as string | null);
   const [openLogin, setOpenLogin] = useState(false);
   const [openUserMenu, setOpenUserMenu] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -116,6 +142,12 @@ export default function profile() {
     }
   }
 
+  const handleClose = () => {
+    setEditing(false);
+    setOpenMenuId(null);
+    load();
+  }
+
   return (
     <View style={{ paddingTop: Insets.top }} className="flex-1 items-center justify-center bg-Dark">
 
@@ -128,7 +160,7 @@ export default function profile() {
           {/* // login button */}
           <TouchableOpacity onPress={() => { user ? setOpenUserMenu(!openUserMenu) : setOpenLogin(!openLogin) }} className="justify-center items-center bg-Primary rounded-full w-12 h-12">
             {user ?
-              <Text>{user?.displayName}</Text>
+              <Text className='text-4xl'>{user?.displayName?.charAt(0)}</Text>
               :
               <MaterialIcons name="person-outline" size={35} />
             }
@@ -209,11 +241,20 @@ export default function profile() {
                     {isMenuOpen && (
                       <View className="absolute top-12 right-0 bg-Secondary border border-Primary/50 rounded-xl shadow-2xl shadow-black z-10 min-w-32">
                         <TouchableOpacity
-                          onPress={() => { console.log("Rename"); }}
+                          onPress={() => { setEditing(!editing) }}
                           className="px-4 py-3 border-b border-white/10 active:bg-white/5"
-
                         >
                           <Text className="text-white text-base">Rename</Text>
+                          {
+                            editing ?
+                              <EditText
+                                visible={editing}
+                                onClose={() => handleClose()}
+                                toRename={item}
+                                type='Playlist'
+                              />
+                              : null
+                          }
                         </TouchableOpacity>
 
                         <TouchableOpacity

@@ -118,7 +118,6 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-3"
                         placeholder={"name"}
-                        secureTextEntry
                         onChangeText={setName}
                     />
                 </View>

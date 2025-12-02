@@ -7,10 +7,11 @@ import MusicManager from "../../utils/musicManager";
 interface EditTextProps {
     visible: boolean;
     onClose: () => void;
-    Song: MusicFile;
+    toRename: any;
+    type : string;
 }   
 
-export default function EditText({ visible, onClose, Song }: EditTextProps) {
+export default function EditText({ visible, onClose, toRename, type }: EditTextProps) {
     const [text, setText] = useState('');
 
     return (
@@ -40,7 +41,7 @@ export default function EditText({ visible, onClose, Song }: EditTextProps) {
                             <View className="mb-6">
                                 <TextInput
                                     className="border border-gray-300 rounded-lg p-4 text-base bg-gray-50"
-                                    placeholder={Song.name}
+                                    placeholder={toRename.name}
                                     multiline
                                     numberOfLines={4}
                                     autoFocus
@@ -57,7 +58,8 @@ export default function EditText({ visible, onClose, Song }: EditTextProps) {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => { 
-                                        MusicManager.renameMusic(Song.id, text);
+                                        {type === "Song" && MusicManager.renameMusic(toRename.id, text)};
+                                        {type === "Playlist" && MusicManager.renamePlaylist(toRename.id, text)};
                                         onClose();
                                         return true;
                                     }}

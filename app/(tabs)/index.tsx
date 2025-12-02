@@ -149,6 +149,17 @@ export default function Index() {
                 <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
                   onPress={() => handlePresses(item.id, "edit")}>
                   <MaterialIcons name="drive-file-rename-outline" color={"#DA7676"} size={35} />
+                  {
+                    editing ?
+                      <EditText
+                        visible={editing}
+                        onClose={() => handleClose()}
+                        toRename={item}
+                        type="Song"
+                      />
+                      :
+                      null
+                  }
                 </TouchableOpacity>
 
                 {/* Add to playlist */}
@@ -171,17 +182,8 @@ export default function Index() {
                 <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
                   onPress={() => handlePresses(item.id, "delete")}>
                   <MaterialIcons name="delete-forever" color={"#DA7676"} size={35} />
-                  {
-                    editing ?
-                      <EditText
-                        visible={editing}
-                        onClose={() => handleClose()}
-                        Song={item}
-                      />
-                      :
-                      null
-                  }
                 </TouchableOpacity>
+
               </View>
             )}
           </View>
