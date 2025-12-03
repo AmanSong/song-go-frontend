@@ -53,10 +53,10 @@ export default function DownloadToast() {
                 <View className="flex-1">
                     <Text className="text-sm font-semibold text-gray-800">
                         {downloadStatus === 'downloading' 
-                            ? `Downloading... ${downloadProgress}%`
+                            ? `Progress...${downloadProgress}%`
                             : downloadStatus === 'completed'
-                            ? 'Download Complete!'
-                            : 'Download Failed'
+                            ? 'Completed!'
+                            : 'Failed!'
                         }
                     </Text>
                     

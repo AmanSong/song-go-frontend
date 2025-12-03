@@ -11,6 +11,7 @@ import { useAuth } from '../utils/useAuth';
 import { User } from '../context/authContext';
 import EditText from '../components/modals/editTextModal';
 import { databaseUtility } from '../utils/databaseUtility';
+import { useDownload } from '../context/downloadContext';
 
 export type Playlist = {
   id: string;
@@ -23,6 +24,23 @@ type UserMenuProps = { user: User };
 function UserMenu({ user }: UserMenuProps) {
   const { logout } = useAuth();
 
+  const { startDownloadProgress, updateDownloadProgress, completeDownload, errorDownload } = useDownload();
+
+  const handleBackup = async () => {
+    try {
+      startDownloadProgress();
+      updateDownloadProgress(25);
+      const result = await databaseUtility.backup(user.id);
+
+      console.log('Backup result:', result);
+      completeDownload();
+
+    } catch (error) {
+      console.error('Backup error:', error);
+      errorDownload();
+    };
+  }
+
   return (
     <View className="absolute top-28 right-5 bg-Secondary border border-Primary/50 rounded-xl shadow-2xl shadow-black z-10 min-w-32">
       <View className="px-4 py-3 border-b border-white/10 active:bg-white/5">
@@ -31,7 +49,7 @@ function UserMenu({ user }: UserMenuProps) {
       </View>
 
       <TouchableOpacity
-        onPress={() => { databaseUtility.backup(user.id) }}
+        onPress={() => { handleBackup() }}
         className="px-4 py-3 border-b border-white/10 active:bg-white/5"
       >
         <View className='flex-row items-start'>
