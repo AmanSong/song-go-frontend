@@ -1,6 +1,7 @@
 import { Directory, File, Paths } from 'expo-file-system';
 import { v4 as uuidv4 } from 'uuid';
 import { Playlist } from '../(tabs)/profile';
+import * as Asset from 'expo-asset';
 
 export interface MusicFile {
   id: string;
@@ -307,6 +308,46 @@ export const MusicManager = {
     }
   },
 
+  async redownload(music: any) {
+    try {
+      const musicDir = new Directory(Paths.document, 'music');
+      if (!musicDir.exists) {
+        console.log('Music folder does not exist.');
+        return;
+      }
+
+      for (const file of music.files) {
+
+        const musicDir = new Directory(Paths.document, 'music');
+        if (!musicDir.exists) {
+          musicDir.create({ intermediates: true });
+        }
+
+        // Create a unique folder for this song
+        const folderId = uuidv4();
+        const songDir = new Directory(musicDir, folderId);
+        songDir.create({ intermediates: true });
+
+        // A text file to store the music name
+        const musicName = new File(songDir, 'musicName.txt');
+        musicName.create();
+
+        let name = file.file_name
+        let cleanName = name.replace("%20", " ");
+        musicName.write(cleanName);
+
+        // download audio
+        const musicFile = new File(songDir, 'audio.mp3');
+        const downloadResult = await File.downloadFileAsync(file.downloadUrl, musicFile);
+        if (!downloadResult.exists) {
+          throw new Error('Audio download failed');
+        }
+        
+      }
+    } catch (error) {
+      console.error("Error downloading music", error)
+    }
+  }
 
 };
 

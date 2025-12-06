@@ -41,6 +41,23 @@ function UserMenu({ user }: UserMenuProps) {
     };
   }
 
+  const handlerRetrieve = async () => {
+    try {
+      startDownloadProgress();
+      updateDownloadProgress(25);
+
+      const result = await databaseUtility.retrieve(user.id);
+      updateDownloadProgress(55);
+      console.log(result)
+      MusicManager.redownload(result);
+      
+      completeDownload();
+    } catch (error) {
+      console.error('Retrieve error:', error);
+      errorDownload();
+    };
+  }
+
   return (
     <View className="absolute top-28 right-5 bg-Secondary border border-Primary/50 rounded-xl shadow-2xl shadow-black z-10 min-w-32">
       <View className="px-4 py-3 border-b border-white/10 active:bg-white/5">
@@ -61,7 +78,7 @@ function UserMenu({ user }: UserMenuProps) {
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => { console.log("hi") }}
+        onPress={() => { handlerRetrieve() }}
         className="px-4 py-3 border-b border-white/10 active:bg-white/5"
       >
         <View className='flex-row items-start'>

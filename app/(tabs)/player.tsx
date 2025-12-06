@@ -83,10 +83,18 @@ function FullPlayer() {
                 <View className="justify-center items-center w-full h-72">
                     <ImageBackground
                         blurRadius={10}
-                        source={{ uri: currentTrack?.image }}
+                        source={
+                            currentTrack?.image
+                                ? { uri: currentTrack?.image }
+                                : require("../../assets/images/Song_Go.jpg")
+                        }
                         className="h-64 w-96 justify-center items-center"
                         borderRadius={5}>
-                        <Image className="w-72 h-40" source={{ uri: currentTrack?.image }} />
+                        <Image className="w-72 h-40" source={
+                            currentTrack?.image
+                                ? { uri: currentTrack?.image }
+                                : require("../../assets/images/Song_Go.jpg")
+                        } />
                     </ImageBackground>
                 </View>
 
@@ -106,7 +114,11 @@ function FullPlayer() {
 
                             <TouchableOpacity onPress={() => selectMusic(item)}>
                                 <View className="flex-row items-start">
-                                    <Image className="w-16 h-16 rounded-lg mr-4" resizeMode="cover" source={{ uri: item.image }} />
+                                    <Image className="w-16 h-16 rounded-lg mr-4" resizeMode="cover" source={
+                                        item.image
+                                            ? { uri: item.image }
+                                            : require("../../assets/images/Song_Go.jpg")
+                                    } />
                                     <View className="max-w-[75%]">
                                         <Text numberOfLines={2} className="text-white font-semibold text-base">
                                             {item.name}

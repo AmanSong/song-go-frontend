@@ -14,6 +14,7 @@ export const databaseUtility = {
                     uri: file.music,
                     name: file.name || "music.mp3",
                     type: "audio/mpeg",
+                    
                 } as any);
             });
 
@@ -35,6 +36,26 @@ export const databaseUtility = {
 
             console.error('Error during backup:', error);
             throw error;
+        }
+    },
+
+    async retrieve(userId: string) {
+        try {
+            const response = await fetch(
+                `http://${process.env.EXPO_PUBLIC_IP_ADDRESS || "localhost:3000"}/api/database/retrieve?userId=${userId}`,
+                {
+                    method: "GET",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Retrieve failed');
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error during data retrieval", error);
         }
     }
 

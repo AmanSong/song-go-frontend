@@ -128,10 +128,19 @@ export default function Index() {
               <TouchableOpacity className="flex-row items-start"
                 onPress={() => setExpandedId(prevId => prevId === item.id ? null : item.id)}
               >
-                <Image source={{ uri: item.image }} className="w-32 h-24 rounded-lg mr-4" />
+                <Image
+                  source={
+                    item.image
+                      ? { uri: item.image }
+                      : require("../../assets/images/Song_Go.jpg")
+                  }
+                  className="w-32 h-24 rounded-lg mr-4"
+                />
+
                 <View className="flex-1">
                   <Text className="text-white text-base" numberOfLines={4}>
                     {item.name}
+
                   </Text>
                 </View>
               </TouchableOpacity>
