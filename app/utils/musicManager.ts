@@ -1,7 +1,6 @@
 import { Directory, File, Paths } from 'expo-file-system';
 import { v4 as uuidv4 } from 'uuid';
 import { Playlist } from '../(tabs)/profile';
-import * as Asset from 'expo-asset';
 
 export interface MusicFile {
   id: string;
@@ -342,7 +341,7 @@ export const MusicManager = {
         if (!downloadResult.exists) {
           throw new Error('Audio download failed');
         }
-        
+
       }
     } catch (error) {
       console.error("Error downloading music", error)

@@ -70,6 +70,7 @@ export default function Download() {
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                             onSubmitEditing={handleSearch}
+                            placeholder="Search from YouTube"
                         />
                     </View>
                 }

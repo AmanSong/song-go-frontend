@@ -1,5 +1,5 @@
-import { FlatList, Text, View, TouchableOpacity, Image, Alert } from "react-native";
-import { useEffect, useState, useCallback } from "react";
+import { FlatList, Text, View, TouchableOpacity, Image, Alert, TextInput } from "react-native";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MusicManager } from "../utils/musicManager"
 import { useFocusEffect } from "@react-navigation/native";
@@ -7,7 +7,6 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRouter } from "expo-router";
 import EditText from "../components/modals/editTextModal";
 import ListPlaylistModal from "../components/modals/listPlaylistsModal";
-import SearchBar from "../components/searchBar";
 import { MusicFile } from "../utils/musicManager";
 
 export default function Index() {
@@ -17,6 +16,7 @@ export default function Index() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editing, setEditing] = useState(false)
   const [openPlaylist, setOpenPlaylist] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("")
 
   useFocusEffect(
     useCallback(() => {
@@ -105,21 +105,45 @@ export default function Index() {
     listMusicFiles();
   }, []);
 
+  const filteredData = useMemo(() => {
+    return music.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
 
   return (
     <View className="flex-1" style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#1E1E1E' }}>
 
-      <View className="flex-row justify-center items-center h-16 bg-Primary/50 m-2 rounded-full">
+      <View className="flex-row justify-between items-center h-16 bg-white/5 mx-5 my-4 rounded-3xl border border-white/10 backdrop-blur-xl">
         <TouchableOpacity
           onPress={() => playAllMusic()}
-          className="bg-Dark/50 h-12 w-12 rounded-full justify-center items-center">
-          <MaterialIcons name="play-arrow" color={"#DA7676"} size={35} />
+          className="h-12 w-12 rounded-full justify-center items-center ml-5 bg-Primary/40"
+          activeOpacity={0.8}
+        >
+          <MaterialIcons name="play-arrow" color={"white"} size={36} />
         </TouchableOpacity>
+
+        <View className="flex-1 ml-4 mr-1">
+          <View className="bg-black/20 rounded-full">
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Find your music"
+              placeholderTextColor="#BBBBBB"
+              className="text-white px-4 py-3.5 text-base font-medium"
+              selectionColor="#FF6B6B"
+            />
+          </View>
+        </View>
+
+        <View className="mr-2">
+          <MaterialIcons name="search" size={26} color="#BBBBBB" />
+        </View>
       </View>
 
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
-        data={music}
+        data={filteredData}
         keyExtractor={(item, index) => `${item.name}-${index}`}
         renderItem={({ item }: { item: MusicFile }) => (
           <View className="p-4 border-b border-gray-700">

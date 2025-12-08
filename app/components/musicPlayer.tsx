@@ -11,13 +11,17 @@ interface MusicPlayerProps {
     onNext?: () => void;
     onPlayStateChange?: (playing: boolean) => void;
     handlePlayPause?: () => void;
+    onShuffle?: () => void;
+    shuffleOn?: boolean;
+    onRepeat?: () => void;
 }
 
-export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateChange }: MusicPlayerProps) {
+export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateChange, onShuffle, shuffleOn, onRepeat }: MusicPlayerProps) {
     const normalizedUrl = musicUrl?.replace("file:///", "/");
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isSeeking, setIsSeeking] = useState(false);
+    const [repeatOn, setRepeatOn] = useState(false);
 
     let player: AudioPlayer;
     player = useAudioPlayer(null);
@@ -29,6 +33,7 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
         setAudioRef({
             play: () => player.play(),
             pause: () => player.pause()
+            
         });
     }, [player, setAudioRef]);
 
@@ -55,7 +60,12 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
                 if (player.isLoaded) {
                     setPosition(player.currentTime || 0);
                     if (Math.floor(player.currentTime || 0) >= Math.floor(duration)) {
-                        onNext && onNext();
+                        if(repeatOn) {
+                            onSlidingComplete(0);
+                        }
+                        else {
+                            onNext && onNext();
+                        }
                     }
                 }
 
@@ -99,6 +109,10 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
 
     const progress = duration > 0 ? position / duration : 0;
 
+    const setRepeat = () => {
+        setRepeatOn(!repeatOn);
+    }
+
     return (
         <View className="flex-1 items-center justify-center">
             <View className="w-full px-8">
@@ -121,6 +135,10 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
                 />
 
                 <View className="flex-row justify-center items-center mt-4">
+                    <TouchableOpacity onPress={onShuffle} className="active:opacity-70 mr-8">
+                        <MaterialIcons name={shuffleOn ? "shuffle-on" : "shuffle"} size={30} color={shuffleOn ? "#DA7676" : "#DA8080"} />
+                    </TouchableOpacity>
+
                     <TouchableOpacity onPress={onPrevious} className="active:opacity-70">
                         <MaterialIcons name="skip-previous" size={40} color={"#DA7676"} />
                     </TouchableOpacity>
@@ -134,6 +152,11 @@ export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateC
                     <TouchableOpacity onPress={onNext} className="active:opacity-70">
                         <MaterialIcons name="skip-next" size={40} color={"#DA7676"} />
                     </TouchableOpacity>
+
+                    <TouchableOpacity onPress={setRepeat} className="active:opacity-70 ml-8">
+                        <MaterialIcons name={repeatOn ? "repeat-on" : "repeat"} size={30} color={repeatOn ? "#DA7676" : "#DA8080"} />
+                    </TouchableOpacity>
+
                 </View>
 
             </View>

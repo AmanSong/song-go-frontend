@@ -17,6 +17,7 @@ interface MusicFile {
 function FullPlayer() {
     const insets = useSafeAreaInsets();
     const { list, index, playlistTitle } = useLocalSearchParams();
+    const [shuffleOn, setShuffleOn] = useState(false);
 
     const {
         currentTrack,
@@ -47,8 +48,13 @@ function FullPlayer() {
 
     const handleNext = () => {
         const newIndex = currentIndex < musicList.length - 1 ? currentIndex + 1 : 0;
-        //setLocalCurrentIndex(newIndex);
-        setCurrentIndex(newIndex);
+        const random = Math.floor(Math.random() * (musicList.length - 0 + 1)) + 0;
+        {
+            shuffleOn ?
+            setCurrentIndex(random)
+            :
+            setCurrentIndex(newIndex)
+        }
     };
 
     const selectMusic = (music: MusicFile) => {
@@ -72,6 +78,10 @@ function FullPlayer() {
     const handlePlayStateChange = (playing: boolean) => {
         setIsPlaying(playing);
     };
+
+    const handleShuffle = () => {
+        setShuffleOn(!shuffleOn)
+    }
 
     return (
         <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom, backgroundColor: '#1E1E1E' }}>
@@ -106,13 +116,14 @@ function FullPlayer() {
                     data={musicList}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }: { item: MusicFile }) => (
-                        <View className={`flex-row items-center justify-between p-2 mb-2 rounded-3xl border border-white/10 
+
+                        <TouchableOpacity onPress={() => selectMusic(item)}>
+                            <View className={`flex-row items-center justify-between p-2 mb-2 rounded-3xl border border-white/10 
                             ${currentTrack?.id === item.id
                                 ? 'bg-Primary/90'
                                 : 'bg-Secondary/50'
                             }`}>
 
-                            <TouchableOpacity onPress={() => selectMusic(item)}>
                                 <View className="flex-row items-start">
                                     <Image className="w-16 h-16 rounded-lg mr-4" resizeMode="cover" source={
                                         item.image
@@ -125,9 +136,9 @@ function FullPlayer() {
                                         </Text>
                                     </View>
                                 </View>
-                            </TouchableOpacity>
-
-                        </View>
+                            </View>
+                        </TouchableOpacity>
+                        
                     )}
                 />
 
@@ -149,6 +160,8 @@ function FullPlayer() {
                             onPrevious={handlePrevious}
                             onNext={handleNext}
                             onPlayStateChange={handlePlayStateChange}
+                            onShuffle={handleShuffle}
+                            shuffleOn={shuffleOn}
                         />
                     </View>
                 </View>
