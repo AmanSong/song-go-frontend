@@ -71,7 +71,23 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
     const [confirmPassword, setConfirmPassword] = useState("");
     const passwordsMatch = password === confirmPassword;
 
+    // In your signup route
+    function validatePassword(password: string) {
+        const minLength = 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumbers = /\d/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        return password.length >= minLength &&
+            hasUpperCase &&
+            hasLowerCase &&
+            hasNumbers &&
+            hasSpecialChar;
+    }
+
     async function handleSignUp() {
+
         if (!passwordsMatch) {
             alert("Passwords do not match!");
             return;
@@ -83,6 +99,10 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
         if (password === "") {
             alert("Password can't be empty!");
             return
+        }
+
+        if(!validatePassword(password)) {
+            alert("Password too weak");
         }
 
         const { data, error } = await authUtility.handleSignUp(name, email, password);

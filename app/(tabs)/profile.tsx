@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useSafeAreaInsets, } from 'react-native-safe-area-context';
 import NewPlayList from '../components/modals/newPlaylistModal';
@@ -27,35 +27,85 @@ function UserMenu({ user }: UserMenuProps) {
   const { startDownloadProgress, updateDownloadProgress, completeDownload, errorDownload } = useDownload();
 
   const handleBackup = async () => {
-    try {
-      startDownloadProgress();
-      updateDownloadProgress(25);
-      const result = await databaseUtility.backup(user.id);
+    const showConfirmationAlert = () => {
+      Alert.alert(
+        "Do you wish to backup your songs?",
+        "(Does not save thumbnails currently)",
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          {
+            text: "OK",
+            onPress: () => {
+              backup();
+            },
+            style: "destructive"
+          }
+        ]
+      );
 
-      console.log('Backup result:', result);
-      completeDownload();
-
-    } catch (error) {
-      console.error('Backup error:', error);
-      errorDownload();
     };
+    showConfirmationAlert();
+
+    async function backup() {
+      try {
+        startDownloadProgress();
+        updateDownloadProgress(25);
+        const result = await databaseUtility.backup(user.id);
+
+        console.log('Backup result:', result);
+        completeDownload();
+
+      } catch (error) {
+        console.error('Backup error:', error);
+        errorDownload();
+      };
+    }
   }
 
   const handlerRetrieve = async () => {
-    try {
-      startDownloadProgress();
-      updateDownloadProgress(25);
 
-      const result = await databaseUtility.retrieve(user.id);
-      updateDownloadProgress(55);
-      console.log(result)
-      MusicManager.redownload(result);
-      
-      completeDownload();
-    } catch (error) {
-      console.error('Retrieve error:', error);
-      errorDownload();
+    const showConfirmationAlert = () => {
+      Alert.alert(
+        "Do you wish to your retrieve backed up songs?",
+        "(This may take a moment)",
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          {
+            text: "OK",
+            onPress: () => {
+              getBackups();
+            },
+            style: "destructive"
+          }
+        ]
+      );
+
     };
+    showConfirmationAlert();
+
+    async function getBackups() {
+      try {
+        startDownloadProgress();
+        updateDownloadProgress(25);
+
+        const result = await databaseUtility.retrieve(user.id);
+        updateDownloadProgress(55);
+        console.log(result)
+        MusicManager.redownload(result);
+
+        completeDownload();
+      } catch (error) {
+        console.error('Retrieve error:', error);
+        errorDownload();
+      };
+
+    }
   }
 
   return (
@@ -106,7 +156,7 @@ function UserMenu({ user }: UserMenuProps) {
 
 export default function profile() {
   //user details if logged in
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const Insets = useSafeAreaInsets();
   const router = useRouter();
@@ -318,7 +368,7 @@ export default function profile() {
       }
 
       {
-        user ?
+        isAuthenticated && user ?
           openUserMenu ?
             <UserMenu user={user} />
             :

@@ -93,8 +93,7 @@ export default function Index() {
       } catch (error) {
         console.error('Error listing music files:', error);
         setMusic([]);
-      }
-
+      };
     } catch (error) {
       console.error('Error listing music files:', error);
       setMusic([]);
@@ -141,11 +140,16 @@ export default function Index() {
         </View>
       </View>
 
+      <View className="ml-2 p-2">
+        <Text className="text-white">{music.length} Songs</Text>
+      </View>
+
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
-        data={filteredData}
+        data={filteredData.length === 0 ? music : filteredData}
         keyExtractor={(item, index) => `${item.name}-${index}`}
         renderItem={({ item }: { item: MusicFile }) => (
+
           <View className="p-4 border-b border-gray-700">
 
             <View className="w-full pt-2">
