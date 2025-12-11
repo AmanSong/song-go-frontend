@@ -14,11 +14,9 @@ export interface YouTubeVideo {
   };
 }
 
-const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
-
 export default async function searchYouTube({ query, maxResults }: { query: string; maxResults?: number }): Promise<YouTubeVideo[]> {
   try {
-    const response = await fetch(`http://${SERVER_IP}/api/youtube/search?q=${encodeURIComponent(query)}&maxResults=${maxResults || 100}`);
+    const response = await fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/api/youtube/search?q=${encodeURIComponent(query)}&maxResults=${maxResults || 100}`);
     const data = await response.json();
     console.log("YouTube API response data:", data.items);
     return data.items as YouTubeVideo[];

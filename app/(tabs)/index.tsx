@@ -17,6 +17,8 @@ export default function Index() {
   const [editing, setEditing] = useState(false)
   const [openPlaylist, setOpenPlaylist] = useState(false);
   const [searchQuery, setSearchQuery] = useState("")
+  const [multiSelect, setMultiSelect] = useState(false);
+  const [selectedMusic, setSelectedMusic] = useState<MusicFile[]>([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -105,10 +107,60 @@ export default function Index() {
   }, []);
 
   const filteredData = useMemo(() => {
-    return music.filter(item =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery]);
+    const q = (searchQuery || '').trim().toLowerCase();
+    if (!q) return music;
+    return music.filter(item => (item.name || '').toLowerCase().includes(q));
+  }, [searchQuery, music]);
+
+  const handleMultiSelect = (music: MusicFile) => {
+    setSelectedMusic(prev => {
+      // Check if music is already selected
+      const isAlreadySelected = prev.some(item => item.id === music.id);
+
+      if (isAlreadySelected) {
+        // Remove it if already selected
+        return prev.filter(item => item.id !== music.id);
+      } else {
+        // Add it if not selected
+        return [...prev, music];
+      }
+    });
+  };
+
+  function multiSelectClose() {
+    setSelectedMusic([]);
+    setMultiSelect(false);
+  }
+
+  function handleMultiDelete() {
+    const showConfirmationAlert = () => {
+      Alert.alert(
+        `Are you sure you want to delete ${selectedMusic.length} songs?`,
+        "This action cannot be undone.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          {
+            text: "OK",
+            onPress: () => {
+              selectedMusic.forEach((music, index) => {
+                console.log(`Music ${index + 1}:`, music.name);
+                MusicManager.deleteMusic(music.id);
+              });
+
+              multiSelectClose();
+              listMusicFiles();
+            },
+            style: "destructive"
+          }
+        ]
+      );
+
+    };
+    showConfirmationAlert();
+  }
 
   return (
     <View className="flex-1" style={{ flex: 1, paddingTop: insets.top, backgroundColor: '#1E1E1E' }}>
@@ -140,21 +192,50 @@ export default function Index() {
         </View>
       </View>
 
-      <View className="ml-2 p-2">
-        <Text className="text-white">{music.length} Songs</Text>
+      {/* Amount of songs or amount of hold selected show here */}
+      <View className="ml-2 p-2 flex-row items-center justify-between">
+        {
+          multiSelect ?
+            <>
+              <Text className="text-white">Selected {selectedMusic.length}</Text>
+              <View className="flex-row items-center justify-center">
+                <MaterialIcons onPress={() => multiSelectClose()} name="cancel" color={"#DA7676"} size={30} />
+                <MaterialIcons onPress={() => handleMultiDelete()} name="delete-forever" color={"crimson"} size={30} />
+              </View>
+            </>
+            :
+            <Text className="text-white">{music.length} Songs</Text>
+        }
       </View>
 
       <FlatList
         contentContainerStyle={{ flexGrow: 1 }}
-        data={filteredData.length === 0 ? music : filteredData}
-        keyExtractor={(item, index) => `${item.name}-${index}`}
+        data={filteredData}
+        keyExtractor={(item) => item.id} 
         renderItem={({ item }: { item: MusicFile }) => (
 
-          <View className="p-4 border-b border-gray-700">
+          <View
+            className={`p-4 border-b border-gray-700 ${multiSelect && selectedMusic.some(music => music.id === item.id)
+              ? 'bg-Primary/30'
+              : ''
+              }`}
+          >
 
             <View className="w-full pt-2">
               <TouchableOpacity className="flex-row items-start"
-                onPress={() => setExpandedId(prevId => prevId === item.id ? null : item.id)}
+                onPress={() => {
+                  multiSelect ?
+                    handleMultiSelect(item) :
+                    setExpandedId(prevId => prevId === item.id ? null : item.id)
+                }
+
+                }
+
+                onLongPress={() => {
+                  { setMultiSelect(true) };
+                  { handleMultiSelect(item) };
+                }
+                }
               >
                 <Image
                   source={

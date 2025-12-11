@@ -19,7 +19,7 @@ export const databaseUtility = {
             });
 
             const response = await fetch(
-                `http://${process.env.EXPO_PUBLIC_IP_ADDRESS || "localhost:3000"}/api/database/backup`,
+                `http://${process.env.EXPO_PUBLIC_API_URL}/api/database/backup`,
                 {
                     method: "POST",
                     body: formData,
@@ -42,7 +42,7 @@ export const databaseUtility = {
     async retrieve(userId: string) {
         try {
             const response = await fetch(
-                `http://${process.env.EXPO_PUBLIC_IP_ADDRESS || "localhost:3000"}/api/database/retrieve?userId=${userId}`,
+                `http://${process.env.EXPO_PUBLIC_API_URL}/api/database/retrieve?userId=${userId}`,
                 {
                     method: "GET",
                 }
