@@ -215,7 +215,7 @@ export default function Index() {
         renderItem={({ item }: { item: MusicFile }) => (
 
           <View
-            className={`p-4 border-b border-gray-700 ${multiSelect && selectedMusic.some(music => music.id === item.id)
+            className={`p-4 border-b border-gray-700 ${expandedId === item.id ? "bg-white/10" : null} ${multiSelect && selectedMusic.some(music => music.id === item.id)
               ? 'bg-Primary/30'
               : ''
               }`}

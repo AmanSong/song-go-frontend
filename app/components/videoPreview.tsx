@@ -6,8 +6,7 @@ import { useAudioPlayer } from "expo-audio";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function VideoPreview(Video: YouTubeVideo) {
-    const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
-    const URL = `http://${SERVER_IP}/api/video/stream/${Video.id.videoId}`
+    const URL = `${process.env.EXPO_PUBLIC_API_URL}/api/video/stream/${Video.id.videoId}`
     const player = useAudioPlayer(URL ? { uri: URL } : null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);

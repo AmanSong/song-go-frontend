@@ -113,6 +113,8 @@ function UserMenu({ user }: UserMenuProps) {
       <View className="px-4 py-3 border-b border-white/10 active:bg-white/5">
         <Text className='text-white text-base'>{user.displayName}</Text>
         <Text className='text-white text-base'>{user.email}</Text>
+
+        <Text numberOfLines={5} className='text-blue-300 w-48 pt-4'>More features and improvements coming soon!</Text>
       </View>
 
       <TouchableOpacity

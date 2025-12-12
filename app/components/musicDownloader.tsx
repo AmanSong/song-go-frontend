@@ -4,7 +4,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Directory, File, Paths } from 'expo-file-system';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
-import { useDownload } from '../context/downloadContext'; 
+import { useDownload } from '../context/downloadContext';
+import MusicManager from "../utils/musicManager";
 
 interface DownloadProps {
     id: string;
@@ -19,14 +20,13 @@ interface SongMetadata {
 }
 
 export default function Downloader({ id, title, image }: DownloadProps) {
-    const SERVER_IP = process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000';
     const [isDownloading, setIsDownloading] = useState(false);
-    
+
     // Use the download context
-    const { 
-        startDownloadProgress, 
-        updateDownloadProgress, 
-        completeDownload, 
+    const {
+        startDownloadProgress,
+        updateDownloadProgress,
+        completeDownload,
         errorDownload,
 
     } = useDownload();
@@ -59,7 +59,7 @@ export default function Downloader({ id, title, image }: DownloadProps) {
 
             // Download audio with progress tracking
             const musicFile = new File(songDir, 'audio.mp3');
-            const musicUrl = `http://${SERVER_IP}/api/video/download/${id}`;
+            const musicUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/video/download/${id}`;
             console.log("DOWNLOADING: " + musicUrl);
             
             
@@ -87,10 +87,11 @@ export default function Downloader({ id, title, image }: DownloadProps) {
                     }
                 } catch (err) {
                     console.warn('Cover download error:', err);
+                    MusicManager.deleteMusic(folderId);
                 }
             }
 
-           
+
             updateDownloadProgress(100);
             completeDownload();
             setIsDownloading(false);
@@ -107,9 +108,9 @@ export default function Downloader({ id, title, image }: DownloadProps) {
             <View style={{ justifyContent: 'center', alignItems: 'center', width: '100%', borderRadius: 8 }}>
                 {
                     isDownloading ?
-                    <ActivityIndicator size={50} color={"#3C3636"}></ActivityIndicator>
-                    :
-                    <MaterialIcons name="download-for-offline" size={50} color="#3C3636" />
+                        <ActivityIndicator size={50} color={"#3C3636"}></ActivityIndicator>
+                        :
+                        <MaterialIcons name="download-for-offline" size={50} color="#3C3636" />
                 }
             </View>
         </TouchableOpacity>

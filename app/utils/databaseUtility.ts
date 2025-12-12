@@ -19,7 +19,7 @@ export const databaseUtility = {
             });
 
             const response = await fetch(
-                `http://${process.env.EXPO_PUBLIC_API_URL}/api/database/backup`,
+                `${process.env.EXPO_PUBLIC_API_URL}/api/database/backup`,
                 {
                     method: "POST",
                     body: formData,
@@ -42,7 +42,7 @@ export const databaseUtility = {
     async retrieve(userId: string) {
         try {
             const response = await fetch(
-                `http://${process.env.EXPO_PUBLIC_API_URL}/api/database/retrieve?userId=${userId}`,
+                `${process.env.EXPO_PUBLIC_API_URL}/api/database/retrieve?userId=${userId}`,
                 {
                     method: "GET",
                 }

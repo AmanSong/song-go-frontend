@@ -5,7 +5,7 @@ export const authUtility = {
 
         try {
             const res = await fetch(
-                `http://${process.env.EXPO_PUBLIC_API_URL}/api/user/session`,
+                `${process.env.EXPO_PUBLIC_API_URL}/api/user/session`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -20,7 +20,7 @@ export const authUtility = {
     async handleLogin(email: string, password: string) {
 
         try {
-            const response = await fetch(`http://${process.env.EXPO_PUBLIC_API_URL}/api/user/login`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/user/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export const authUtility = {
 
     async handleSignUp(name: string, email: string, password: string) {
         try {
-            const response = await fetch(`http://${process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000'}/api/user/signup`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000'}/api/user/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
