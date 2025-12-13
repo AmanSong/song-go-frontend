@@ -40,7 +40,7 @@ export const authUtility = {
 
     async handleSignUp(name: string, email: string, password: string) {
         try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_IP_ADDRESS || 'localhost:3000'}/api/user/signup`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/user/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
