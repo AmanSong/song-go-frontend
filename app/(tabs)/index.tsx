@@ -29,6 +29,7 @@ export default function Index() {
   );
 
   function playAllMusic() {
+    if(music.length === 0) return;
     router.push({
       pathname: "/player",
       params: {

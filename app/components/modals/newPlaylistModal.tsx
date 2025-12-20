@@ -36,7 +36,7 @@ export default function NewPlayList({ visible, onClose }: newPlayListProps) {
 
                             <View className="mb-6">
                                 <TextInput
-                                    className="border border-gray-300 rounded-lg p-4 text-base bg-gray-50"
+                                    className="border border-gray-300 rounded-lg p-4 text-base text-black bg-gray-50"
                                     placeholder={"Name your playlist"}
                                     multiline
                                     numberOfLines={4}

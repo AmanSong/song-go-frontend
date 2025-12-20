@@ -11,7 +11,7 @@ interface SearchBarProps {
 export default function SearchBar({ value, onChangeText, onSubmitEditing, placeholder }: SearchBarProps) {
   return (
     <TextInput
-      className="w-11/12 h-12 bg-white rounded-full px-4 text-lg shadow-md"
+      className="w-11/12 h-12 bg-white rounded-full px-4 text-lg shadow-md text-black"
       placeholder={placeholder}
       placeholderTextColor="#999"
       value={value}

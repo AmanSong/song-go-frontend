@@ -40,7 +40,7 @@ export default function EditText({ visible, onClose, toRename, type }: EditTextP
 
                             <View className="mb-6">
                                 <TextInput
-                                    className="border border-gray-300 rounded-lg p-4 text-base bg-gray-50"
+                                    className="border border-gray-300 rounded-lg p-4 text-base text-black bg-gray-50"
                                     placeholder={toRename.name}
                                     multiline
                                     numberOfLines={4}

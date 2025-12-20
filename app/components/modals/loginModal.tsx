@@ -36,7 +36,7 @@ function LoginInputs({ onClose }: { onClose: () => void }) {
                 <View className="w-10/12">
                     <Text className="p-1">Email</Text>
                     <TextInput
-                        className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-4"
+                        className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-4"
                         placeholder={"your@email.com"}
                         keyboardType="email-address"
                         autoCapitalize="none"
@@ -47,7 +47,7 @@ function LoginInputs({ onClose }: { onClose: () => void }) {
                 <View className="w-10/12">
                     <Text className="p-1">Password</Text>
                     <TextInput
-                        className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-6"
+                        className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-6"
                         placeholder={"password"}
                         secureTextEntry
                         onChangeText={setPassword}
@@ -136,7 +136,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                 <View className="w-10/12">
                     <Text className="p-1">Name</Text>
                     <TextInput
-                        className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-3"
+                        className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
                         placeholder={"name"}
                         onChangeText={setName}
                     />
@@ -145,7 +145,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                 <View className="w-10/12">
                     <Text className="p-1">Email</Text>
                     <TextInput
-                        className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-3"
+                        className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
                         placeholder={"your@email.com"}
                         keyboardType="email-address"
                         autoCapitalize="none"
@@ -156,7 +156,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                 <View className="w-10/12">
                     <Text className="p-1">Password</Text>
                     <TextInput
-                        className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-3"
+                        className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
                         placeholder={"password"}
                         secureTextEntry
                         onChangeText={setPassword}
@@ -166,7 +166,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                 <View className="w-10/12">
                     <Text className="p-1">Confirm Password</Text>
                     <TextInput
-                        className="border border-gray-300 rounded-lg p-3 text-base bg-gray-50 mb-6"
+                        className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-6"
                         placeholder={"confirm password"}
                         secureTextEntry
                         onChangeText={setConfirmPassword}
