@@ -4,6 +4,13 @@ import { AudioPlayer, useAudioPlayer } from "expo-audio";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Slider from "@react-native-community/slider";
 import { usePlayer } from "../context/playerContext";
+import { setAudioModeAsync } from "expo-audio";
+
+setAudioModeAsync({
+  playsInSilentMode: false,
+  shouldPlayInBackground: true,
+  interruptionMode: 'mixWithOthers'
+});
 
 interface MusicPlayerProps {
     musicUrl?: string;
@@ -17,6 +24,7 @@ interface MusicPlayerProps {
 }
 
 export default function MusicPlayer({ musicUrl, onNext, onPrevious, onPlayStateChange, onShuffle, shuffleOn, onRepeat }: MusicPlayerProps) {
+
     const normalizedUrl = musicUrl?.replace("file:///", "/");
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);

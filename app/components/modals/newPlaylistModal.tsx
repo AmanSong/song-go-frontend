@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Modal, View, TouchableOpacity, Text, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import MusicManager from "../../utils/musicManager";
-import { MusicFile } from "../../utils/musicManager";
 
 interface newPlayListProps {
     visible: boolean;
@@ -38,6 +37,7 @@ export default function NewPlayList({ visible, onClose }: newPlayListProps) {
                                 <TextInput
                                     className="border border-gray-300 rounded-lg p-4 text-base text-black bg-gray-50"
                                     placeholder={"Name your playlist"}
+                                    placeholderTextColor={"#7C7D7D"}
                                     multiline
                                     numberOfLines={4}
                                     autoFocus

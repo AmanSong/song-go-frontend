@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Modal, TouchableOpacity, Text, TextInput } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { MusicFile } from "../../utils/musicManager";
 import MusicManager from "../../utils/musicManager";
 
 interface EditTextProps {
@@ -42,6 +41,7 @@ export default function EditText({ visible, onClose, toRename, type }: EditTextP
                                 <TextInput
                                     className="border border-gray-300 rounded-lg p-4 text-base text-black bg-gray-50"
                                     placeholder={toRename.name}
+                                    placeholderTextColor={"#7C7D7D"}
                                     multiline
                                     numberOfLines={4}
                                     autoFocus

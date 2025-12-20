@@ -38,6 +38,7 @@ function LoginInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-4"
                         placeholder={"your@email.com"}
+                        placeholderTextColor={"#7C7D7D"}
                         keyboardType="email-address"
                         autoCapitalize="none"
                         onChangeText={setEmail}
@@ -49,6 +50,7 @@ function LoginInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-6"
                         placeholder={"password"}
+                        placeholderTextColor={"#7C7D7D"}
                         secureTextEntry
                         onChangeText={setPassword}
                     />
@@ -138,6 +140,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
                         placeholder={"name"}
+                        placeholderTextColor={"#7C7D7D"}
                         onChangeText={setName}
                     />
                 </View>
@@ -147,6 +150,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
                         placeholder={"your@email.com"}
+                        placeholderTextColor={"#7C7D7D"}
                         keyboardType="email-address"
                         autoCapitalize="none"
                         onChangeText={setEmail}
@@ -158,6 +162,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-3"
                         placeholder={"password"}
+                        placeholderTextColor={"#7C7D7D"}
                         secureTextEntry
                         onChangeText={setPassword}
                     />
@@ -168,6 +173,7 @@ function SignUpInputs({ onClose }: { onClose: () => void }) {
                     <TextInput
                         className="border border-gray-300 rounded-lg p-3 text-base text-black bg-gray-50 mb-6"
                         placeholder={"confirm password"}
+                        placeholderTextColor={"#7C7D7D"}
                         secureTextEntry
                         onChangeText={setConfirmPassword}
                     />

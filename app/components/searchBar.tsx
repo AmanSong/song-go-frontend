@@ -13,7 +13,7 @@ export default function SearchBar({ value, onChangeText, onSubmitEditing, placeh
     <TextInput
       className="w-11/12 h-12 bg-white rounded-full px-4 text-lg shadow-md text-black"
       placeholder={placeholder}
-      placeholderTextColor="#999"
+      placeholderTextColor="#7C7D7D"
       value={value}
       onChangeText={onChangeText}
       onSubmitEditing={onSubmitEditing}
