@@ -1,5 +1,5 @@
 import { FlatList, Text, View, TouchableOpacity, Image, Alert, TextInput } from "react-native";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, use } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MusicManager } from "../utils/musicManager"
 import { useFocusEffect } from "@react-navigation/native";
@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import EditText from "../components/modals/editTextModal";
 import ListPlaylistModal from "../components/modals/listPlaylistsModal";
 import { MusicFile } from "../utils/musicManager";
+import { useKeepAwake } from 'expo-keep-awake';
 
 export default function Index() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState("")
   const [multiSelect, setMultiSelect] = useState(false);
   const [selectedMusic, setSelectedMusic] = useState<MusicFile[]>([]);
+
+  useKeepAwake();
 
   useFocusEffect(
     useCallback(() => {

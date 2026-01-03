@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, use } from "react";
 import { View, Text, TouchableOpacity, Image, FlatList, ImageBackground } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
+import { useKeepAwake } from "expo-keep-awake";
 import { usePlayer } from "../context/playerContext";
+
+useKeepAwake();
 
 interface MusicFile {
     id: string;
