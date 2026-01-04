@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import MusicPlayer from "../components/musicPlayer";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { usePlayer } from "../context/playerContext";
 
 interface MusicFile {
@@ -178,7 +178,7 @@ export default function Player() {
     // to check if player is focused or not
     useFocusEffect(
         useCallback(() => {
-            useKeepAwake();
+            activateKeepAwakeAsync();
             setShowMiniPlayer(false);
             return () => {
                 deactivateKeepAwake();
