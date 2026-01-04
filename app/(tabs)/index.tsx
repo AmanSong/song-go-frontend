@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import EditText from "../components/modals/editTextModal";
 import ListPlaylistModal from "../components/modals/listPlaylistsModal";
 import { MusicFile } from "../utils/musicManager";
+import { useKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 
 export default function Index() {
   const router = useRouter();
@@ -23,7 +24,9 @@ export default function Index() {
   useFocusEffect(
     useCallback(() => {
       listMusicFiles();
+      useKeepAwake();
       return () => {
+        deactivateKeepAwake();
       };
     }, [])
   );
