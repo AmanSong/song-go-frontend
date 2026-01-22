@@ -42,12 +42,12 @@ export default function Index() {
     });
   }
 
-  function playSingleMusic(item: MusicFile) {
+  function playAtSelection(currentIndex: number) {
     router.push({
       pathname: "/player",
       params: {
-        index: 0,
-        list: JSON.stringify([item]),
+        index: currentIndex,
+        list: JSON.stringify(music),
       },
     });
   }
@@ -216,7 +216,7 @@ export default function Index() {
         contentContainerStyle={{ flexGrow: 1 }}
         data={filteredData}
         keyExtractor={(item) => item.id} 
-        renderItem={({ item }: { item: MusicFile }) => (
+        renderItem={({ item, index }: { item: MusicFile; index: number }) => (
 
           <View
             className={`p-4 border-b border-gray-700 ${expandedId === item.id ? "bg-white/10" : null} ${multiSelect && selectedMusic.some(music => music.id === item.id)
@@ -253,9 +253,9 @@ export default function Index() {
                 <View className="flex-1">
                   <Text className="text-white text-base" numberOfLines={4}>
                     {item.name}
-
                   </Text>
                 </View>
+                
               </TouchableOpacity>
             </View>
 
@@ -263,7 +263,7 @@ export default function Index() {
               <View className="flex-row items-start justify-between px-2 mt-4">
                 {/* Play music */}
                 <TouchableOpacity className="justify-center items-center bg-Primary/20 h-12 w-12 rounded-full"
-                  onPress={() => playSingleMusic(item)}>
+                  onPress={() => playAtSelection(index)}>
                   <MaterialIcons name="play-arrow" color={"#DA7676"} size={35} />
                 </TouchableOpacity>
 

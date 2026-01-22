@@ -16,7 +16,7 @@ interface MusicFile {
 
 function FullPlayer() {
     const insets = useSafeAreaInsets();
-    const { list, index, playlistTitle } = useLocalSearchParams();
+    const { index, list, playlistTitle } = useLocalSearchParams();
     const [shuffleOn, setShuffleOn] = useState(false);
 
     const {
@@ -27,6 +27,13 @@ function FullPlayer() {
         setMusicList,
         setCurrentIndex
     } = usePlayer();
+
+    useEffect(() => {
+        if (index !== undefined) {
+            const idx = typeof index === 'string' ? parseInt(index, 10) : 0;
+            setCurrentIndex(idx);
+        }
+    }, [index, setCurrentIndex]);
 
     const musicList: MusicFile[] = typeof list === 'string' ? JSON.parse(list) : [];
     const [hidden, setHidden] = useState(false);
@@ -51,9 +58,9 @@ function FullPlayer() {
         const random = Math.floor(Math.random() * (musicList.length - 0 + 1)) + 0;
         {
             shuffleOn ?
-            setCurrentIndex(random)
-            :
-            setCurrentIndex(newIndex)
+                setCurrentIndex(random)
+                :
+                setCurrentIndex(newIndex)
         }
     };
 
@@ -120,9 +127,9 @@ function FullPlayer() {
                         <TouchableOpacity onPress={() => selectMusic(item)}>
                             <View className={`flex-row items-center justify-between p-2 mb-2 rounded-3xl border border-white/10 
                             ${currentTrack?.id === item.id
-                                ? 'bg-Primary/90'
-                                : 'bg-Secondary/50'
-                            }`}>
+                                    ? 'bg-Primary/90'
+                                    : 'bg-Secondary/50'
+                                }`}>
 
                                 <View className="flex-row items-start">
                                     <Image className="w-16 h-16 rounded-lg mr-4" resizeMode="cover" source={
@@ -138,7 +145,7 @@ function FullPlayer() {
                                 </View>
                             </View>
                         </TouchableOpacity>
-                        
+
                     )}
                 />
 

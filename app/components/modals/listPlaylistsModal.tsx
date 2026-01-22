@@ -36,6 +36,12 @@ export default function ListPlaylistModal({ visible, onClose, song }: ListPlayli
     }
 
     function addToPlaylist(playlistID: string) {
+        if(isSongInPlaylist(playlists!.find(p => p.id === playlistID)!)) {
+            MusicManager.removeSongFromPlaylist(playlistID, song.id);
+            onClose();
+            return;
+        }
+
         MusicManager.addSongToPlaylist(playlistID, song.id);
         onClose();
     }

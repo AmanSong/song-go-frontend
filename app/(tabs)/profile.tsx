@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, Alert, ScrollView } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useSafeAreaInsets, } from 'react-native-safe-area-context';
 import NewPlayList from '../components/modals/newPlaylistModal';
@@ -168,6 +168,9 @@ export default function profile() {
   const [openLogin, setOpenLogin] = useState(false);
   const [openUserMenu, setOpenUserMenu] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [expandPlaylist, setExpandPlaylist] = useState(null as string | null);
+  const [expandedSongsMap, setExpandedSongsMap] = useState<Record<string, any[]>>({});
+  const [selectedSong, setSelectedSong] = useState(null as string | null);
 
   useFocusEffect(
     useCallback(() => {
@@ -209,7 +212,7 @@ export default function profile() {
           name: await song.name, // Await the Promise<string>
         }))
       );
-      const startIndex = resolvedSongs.length > 0 ? 0 : -1;
+      //const startIndex = resolvedSongs.length > 0 ? 0 : -1;
 
       if (resolvedSongs.length === 0) {
         return;
@@ -218,7 +221,6 @@ export default function profile() {
       router.push({
         pathname: "/player",
         params: {
-          index: startIndex.toString(),
           list: JSON.stringify(resolvedSongs),
           playlistTitle: playlist.name,
         },
@@ -229,11 +231,29 @@ export default function profile() {
     }
   }
 
+
   const handleClose = () => {
     setEditing(false);
     setOpenMenuId(null);
     load();
   }
+
+  async function getSongsInPlaylist(playlist: Playlist) {
+    return await MusicManager.loadSongsFromPlaylist(playlist);
+  }
+
+  const handleExpandPlaylist = async (playlist: Playlist) => {
+    setExpandPlaylist(playlist.id);
+    setOpenMenuId(null);
+
+    const loadedSongs = await getSongsInPlaylist(playlist);
+
+    setExpandedSongsMap(prev => ({
+      ...prev,
+      [playlist.id]: loadedSongs
+    }));
+  };
+
 
   return (
     <View style={{ paddingTop: Insets.top }} className="flex-1 items-center justify-center bg-Dark">
@@ -270,7 +290,6 @@ export default function profile() {
             const extraCount = item.songIds.length - item.preview.length;
             const isMenuOpen = openMenuId === item.id;
 
-
             return (
               <TouchableOpacity
                 onPress={() => playlistSelected(item)}
@@ -278,32 +297,39 @@ export default function profile() {
                 className="bg-Dark/90 mb-3 p-4 rounded-2xl shadow-lg shadow-black/50">
 
                 <View className="flex-row items-center space-x-4">
-                  {/* Preview Thumbnails - Improved Grid */}
-                  <View className="w-24 h-24 bg-Primary/30 rounded-xl overflow-hidden">
-                    <View className="flex-1 flex-row flex-wrap">
-                      {item.preview.slice(0, 4).map((song, index) => (
-                        <View
-                          key={song.id}
-                          className={`${index % 2 === 0 ? 'pr-0.5' : 'pl-0.5'} ${index < 2 ? 'pb-0.5' : 'pt-0.5'} w-1/2 h-1/2`}
-                        >
-                          <Image
-                            source={{ uri: song.coverUri }}
-                            className="w-full h-full"
-                            resizeMode="cover"
-                          />
-                        </View>
-                      ))}
 
-                      {/* Show extra count badge if needed */}
-                      {extraCount > 0 && (
-                        <View className="absolute inset-0 bg-black/60 justify-center items-center">
-                          <Text className="text-white font-semibold text-sm">
-                            +{extraCount}
-                          </Text>
+                  {/* Preview Thumbnails - Improved Grid */}
+                  {
+                    expandPlaylist === item.id ?
+                      null
+                      :
+                      <View className="w-24 h-24 bg-Primary/30 rounded-xl overflow-hidden">
+                        <View className="flex-1 flex-row flex-wrap">
+                          {item.preview.slice(0, 4).map((song, index) => (
+                            <View
+                              key={song.id}
+                              className={`${index % 2 === 0 ? 'pr-0.5' : 'pl-0.5'} ${index < 2 ? 'pb-0.5' : 'pt-0.5'} w-1/2 h-1/2`}
+                            >
+                              <Image
+                                source={{ uri: song.coverUri }}
+                                className="w-full h-full"
+                                resizeMode="cover"
+                              />
+                            </View>
+                          ))}
+
+                          {/* Show extra count badge if needed */}
+                          {extraCount > 0 && (
+                            <View className="absolute inset-0 bg-black/60 justify-center items-center">
+                              <Text className="text-white font-semibold text-sm">
+                                +{extraCount}
+                              </Text>
+                            </View>
+                          )}
                         </View>
-                      )}
-                    </View>
-                  </View>
+                      </View>
+                  }
+                  {/* end of preview thumbnails */}
 
                   {/* Playlist Info */}
                   <View className="flex-1 ml-4">
@@ -321,7 +347,7 @@ export default function profile() {
                       onPress={() => setOpenMenuId(isMenuOpen ? null : item.id)}
                       className="w-10 h-10 justify-center items-center rounded-full active:bg-white/10"
                     >
-                      <MaterialIcons name="more-vert" color={"white"} size={24} />
+                      <MaterialIcons name="more-vert" color={"white"} size={30} />
                     </TouchableOpacity>
 
                     {/* Dropdown Menu */}
@@ -342,6 +368,14 @@ export default function profile() {
                               />
                               : null
                           }
+
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => { handleExpandPlaylist(item) }}
+                          className="px-4 py-3 border-b border-white/10 active:bg-white/5"
+                        >
+                          <Text className="text-white text-base">Expand</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -355,12 +389,80 @@ export default function profile() {
                   </View>
                 </View>
 
+                {/* if expanded, list all songs */}
+                {
+                  expandPlaylist === item.id ?
+
+                    <View className="bg-Primary/70 py-2 rounded-lg h-64 mt-4">
+                      <ScrollView
+                        scrollEnabled={true}
+                        contentContainerStyle={{ padding: 8 }}
+                        showsVerticalScrollIndicator={true}
+                        style={{ backgroundColor: 'transparent' }}
+                      >
+                        {(expandedSongsMap[item.id] || []).map((song) => (
+                          <TouchableOpacity key={song.id} onPress={() => setSelectedSong(song.id)}>
+                            <View className={`flex-row items-center justify-between p-2 mb-2 rounded-3xl border border-white/10
+                            ${selectedSong === song.id
+                                ? 'bg-Secondary/80'
+                                : 'bg-Secondary/60'}`
+                            }>
+
+                              <View className="flex-row items-center flex-1">
+                                <Image
+                                  className="w-16 h-16 rounded-lg mr-4"
+                                  resizeMode="cover"
+                                  defaultSource={require("../../assets/images/Song_Go.jpg")}
+                                  source={
+                                    song.image
+                                      ? { uri: song.image, cache: 'force-cache' }
+                                      : require("../../assets/images/Song_Go.jpg")
+                                  }
+                                />
+                                <View className="flex-1">
+                                  <Text numberOfLines={2} className="text-white font-semibold text-base">
+                                    {song.name}
+                                  </Text>
+                                </View>
+
+                                {
+                                  selectedSong === song.id ?
+                                    <TouchableOpacity
+                                      onPress={() => {
+                                        MusicManager.removeSongFromPlaylist(expandPlaylist, song.id);
+
+                                        setExpandedSongsMap(prev => ({
+                                          ...prev,
+                                          [expandPlaylist]: prev[expandPlaylist].filter(s => s.id !== song.id),
+                                        }));
+
+                                        setSelectedSong(null);
+
+                                        load();
+                                      }}
+
+                                      className='bg-Primary/30 justify-center items-center rounded-full p-1 ml-2'>
+                                      <MaterialIcons name="bookmark-remove" size={25} color="white" />
+                                    </TouchableOpacity>
+                                    :
+                                    null
+                                }
+                              </View>
+
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </View>
+                    :
+                    null
+                }
+
               </TouchableOpacity>
             );
           }}
         />
       </View>
-
 
       {
         openModal ?
