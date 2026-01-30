@@ -19,6 +19,17 @@ export const MusicManager = {
         return;
       }
 
+      // Try to load saved order
+      try {
+        const orderFile = new File(Paths.document, 'musicOrder.json');
+        if (orderFile.exists) {
+          const orderData = await orderFile.text();
+          return JSON.parse(orderData);
+        }
+      } catch (error) {
+        console.log('No saved order found, using default order');
+      }
+
       const songFolders = musicDir.list();
       const musicFiles: MusicFile[] = [];
 
@@ -78,6 +89,28 @@ export const MusicManager = {
     try {
       const songDir = new Directory(Paths.document, `music/${songId}`);
       if (songDir.exists) {
+
+        //remove song from all playlists
+        const playlistsDir = new Directory(Paths.document, 'playlists');
+        const playlistFiles = playlistsDir.list();
+
+        for (const i in playlistFiles) {
+          const file = playlistFiles[i];
+          if (!file.name || !file.name.endsWith('.json')) continue;
+          try {
+            const playlistFile = new File(playlistsDir, file.name);
+            const json = await playlistFile.text();
+            const playlist = JSON.parse(json);
+            if (playlist.songIds.includes(songId)) {
+              playlist.songIds = playlist.songIds.filter((id: string) => id !== songId);
+              playlistFile.write(JSON.stringify(playlist));
+            }
+          } catch (err) {
+            console.warn(`Skipping invalid playlist file ${file.name}:`, err);
+            continue;
+          }
+        }
+
         songDir.delete();
         console.log(`✅ Deleted music folder: ${songId}`);
         return true;
@@ -345,6 +378,15 @@ export const MusicManager = {
       }
     } catch (error) {
       console.error("Error downloading music", error)
+    }
+  },
+
+  async saveMusicOrder(orderedMusic: MusicFile[]): Promise<void> {
+    try {
+      const orderFile = new File(Paths.document, 'musicOrder.json');
+      orderFile.write(JSON.stringify(orderedMusic));
+    } catch (error) {
+      console.error('Error saving music order:', error);
     }
   }
 

@@ -60,14 +60,19 @@ export default function Downloader({ id, title, image }: DownloadProps) {
             // Download audio with progress tracking
             const musicFile = new File(songDir, 'audio.mp3');
             const musicUrl = `${process.env.EXPO_PUBLIC_API_URL}/api/video/download/${id}`;
-            console.log("DOWNLOADING: " + musicUrl);
             
-            
-            updateDownloadProgress(10);
+            if (!musicUrl) {
+                MusicManager.deleteMusic(folderId);
+                throw new Error('No music URL found');
+            }
+    
+            updateDownloadProgress(25);
 
             // Download audio file
             const downloadResult = await File.downloadFileAsync(musicUrl, musicFile);
             if (!downloadResult.exists) {
+                //clean up download failed
+                MusicManager.deleteMusic(folderId);
                 throw new Error('Audio download failed');
             }
 

@@ -275,7 +275,7 @@ export default function profile() {
         </View>
       </View>
 
-      <View className="flex-1 w-full bg-Primary/80 pt-4">
+      <View className="flex-1 w-full bg-Primary/80 pt-4" onTouchStart={() => (setExpandPlaylist(null))}>
         <View className="px-6 pb-4">
           <Text className="text-2xl font-bold text-white mb-2">
             Playlists
@@ -393,7 +393,7 @@ export default function profile() {
                 {
                   expandPlaylist === item.id ?
 
-                    <View className="bg-Primary/70 py-2 rounded-lg h-64 mt-4">
+                    <View className="bg-Primary/70 py-2 rounded-lg h-64 mt-4" onTouchStart={(e) => e.stopPropagation()}>
                       <ScrollView
                         scrollEnabled={true}
                         contentContainerStyle={{ padding: 8 }}
